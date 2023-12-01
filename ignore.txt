@@ -1,0 +1,5 @@
+-- Build --
+ng build --base-href "https://GerardPaul.github.io/thegpworx/"
+
+-- Deploy --
+npx angular-cli-ghpages --dir=dist/thegpworx

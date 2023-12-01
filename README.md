@@ -8,4 +8,4 @@ Showcasing my love for Gunpla, Games, Technology, Toys, Travel, Food and every s
 - Youtube Channel: TheGPWorx https://www.youtube.com/@TheGPWorx
 - Instagram: @geraRdN0TgeraLd https://instagram.com/theGPWorx
 - Twitter: @theGPWorx https://twitter.com/thegpworx
-- Website: https://gerardpaul.github.io/
+- Website: https://gerardpaul.github.io/thegpworx
