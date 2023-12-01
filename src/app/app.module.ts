@@ -17,6 +17,7 @@ import { AboutComponent } from './views/main/about/about.component';
 import { ContactComponent } from './views/main/contact/contact.component';
 import { HomeComponent } from './views/main/home/home.component';
 import { ProjectsComponent } from './views/main/projects/projects.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -39,6 +40,7 @@ import { ProjectsComponent } from './views/main/projects/projects.component';
     BrowserModule,
     AppRoutingModule,
     RouterModule.forRoot([]),
+    BrowserAnimationsModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
