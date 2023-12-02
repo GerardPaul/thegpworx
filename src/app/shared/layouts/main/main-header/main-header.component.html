@@ -1,19 +1,19 @@
-<header class="bg-white">
+<header>
   <nav class="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
     <div class="hidden lg:flex lg:flex-1">
       <a class="-m-1.5 p-1.5" routerLink="/home">
         <span class="sr-only">TheGPWorx</span>
-        <img class="h-8 w-auto" src="/assets/images/gp_transparent_black_2000x2000.png" alt="TheGPWorx Logo">
+        <img class="h-8 w-auto" src="/assets/images/gp_transparent_white_2000x2000.png" alt="TheGPWorx Logo">
       </a>
     </div>
     <div class="flex flex-1 lg:hidden justify-center items-center">
       <a class="-m-1.5 p-1.5 flex items-center" routerLink="/home">
         <span class="sr-only">TheGPWorx</span>
-        <img class="h-8 w-auto" src="/assets/images/gp_transparent_black_2000x2000.png" alt="TheGPWorx Logo">
-        <span class="font-semibold">TheGPWorx</span>
+        <img class="h-8 w-auto" src="/assets/images/gp_transparent_white_2000x2000.png" alt="TheGPWorx Logo">
+        <span class="font-medium">TheGPWorx</span>
       </a>
     </div>
-    <div class="flex lg:hidden">
+    <!-- <div class="flex lg:hidden">
       <button type="button" class="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700" (click)="showMenu = true">
         <span class="sr-only">Open main menu</span>
         <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
@@ -29,11 +29,11 @@
     </div>
     <div class="hidden lg:flex lg:flex-1 lg:justify-end space-x-4">
       <a class="text-sm font-semibold leading-6 text-gray-900" routerLink="/login">Login</a>
-      <!-- <button class="flex transition-transform hover:scale-125 align-middle" (click)="darkMode.set(!darkMode())">
+      <button class="flex transition-transform hover:scale-125 align-middle" (click)="darkMode.set(!darkMode())">
         <span *ngIf="!darkMode()" class="material-icons">dark_mode</span>
         <span *ngIf="darkMode()" class="material-icons">light_mode</span>
-      </button> -->
-    </div>
+      </button>
+    </div> -->
   </nav>
 
   <!-- Mobile menu, show/hide based on menu open state. -->
@@ -60,7 +60,7 @@
             <a class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-200" routerLink="/projects">Projects</a>
             <a class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-200" routerLink="/contact">Contact</a>
             <a class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-200" routerLink="/about">About</a>
-            <a class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-white bg-gray-800 hover:bg-gray-50 hover:text-gray-900" routerLink="/login">Login</a>
+            <!-- <a class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-white bg-gray-800 hover:bg-gray-50 hover:text-gray-900" routerLink="/login">Login</a> -->
 
             <!-- <button class="flex transition-transform hover:scale-125 align-middle" (click)="darkMode.set(!darkMode())">
               <span *ngIf="!darkMode()" class="material-icons">dark_mode</span>
