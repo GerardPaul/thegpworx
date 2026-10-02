@@ -1,0 +1,16 @@
+import { Component } from '@angular/core';
+import { SocialLinks } from '../shared/social-links';
+
+@Component({
+  selector: 'app-footer',
+  imports: [SocialLinks],
+  template: `
+    <footer class="border-t border-white/10 px-4 py-10 text-center text-sm text-gray-400">
+      <app-social-links class="mb-4 justify-center" size="h-5" />
+      <p>© {{ year }} TheGPWorx. All rights reserved.</p>
+    </footer>
+  `,
+})
+export class Footer {
+  year = new Date().getFullYear();
+}

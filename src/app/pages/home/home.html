@@ -1,0 +1,59 @@
+<!-- Hero -->
+<section class="relative isolate flex min-h-[calc(100svh-57px)] flex-col items-center justify-center overflow-hidden px-4 text-center">
+  <img src="assets/images/thegpworx_bg.jpg" alt="" class="absolute inset-0 -z-10 h-full w-full object-cover opacity-20">
+  <div class="absolute inset-0 -z-10 bg-gradient-to-b from-transparent via-black/40 to-black"></div>
+
+  <img src="assets/images/thegpworx_logo_transparent.png" [alt]="profile.brand" class="w-full max-w-3xl">
+  <p class="mt-4 flex items-center gap-3 text-sm font-medium uppercase tracking-[0.3em] text-gray-300 sm:text-base">
+    @for (word of profile.tagline; track word; let last = $last) {
+      <span>{{ word }}</span>
+      @if (!last) { <span aria-hidden="true">·</span> }
+    }
+  </p>
+  <h1 class="mt-10 text-lg text-gray-400 sm:text-xl">
+    {{ profile.name }} — <span class="text-white">{{ profile.role }}</span>
+  </h1>
+  <div class="mt-8 flex flex-wrap justify-center gap-3">
+    <a routerLink="/" fragment="projects" class="rounded-full bg-white px-6 py-3 font-medium text-black transition hover:bg-gray-200">View projects</a>
+    <a routerLink="/" fragment="contact" class="rounded-full border border-white/30 px-6 py-3 font-medium transition hover:border-white">Get in touch</a>
+  </div>
+</section>
+
+<!-- About -->
+<section id="about" class="mx-auto max-w-6xl scroll-mt-16 px-4 py-24 sm:px-6">
+  <div class="grid items-center gap-10 md:grid-cols-[auto,1fr]">
+    <img src="assets/images/thegpworx_pixel_char_500.png" alt="Pixel-art Gerard" class="mx-auto h-56 md:h-72">
+    <div>
+      <p class="text-sm font-medium uppercase tracking-widest text-gray-500">About</p>
+      <h2 class="mt-2 text-4xl font-semibold sm:text-6xl">Hey, I'm {{ profile.firstName }}.</h2>
+      <p class="mt-6 max-w-2xl text-lg text-gray-300">{{ profile.intro }}</p>
+      <ul class="mt-6 flex flex-wrap gap-2 text-sm">
+        @for (fact of profile.facts; track fact) {
+          <li class="rounded-full bg-white/10 px-4 py-1.5 text-gray-200">{{ fact }}</li>
+        }
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- Projects -->
+<section id="projects" class="mx-auto max-w-6xl scroll-mt-16 px-4 py-24 sm:px-6">
+  <p class="text-sm font-medium uppercase tracking-widest text-gray-500">Projects</p>
+  <h2 class="mt-2 text-4xl font-semibold sm:text-6xl">Things I've built.</h2>
+  <div class="mt-16 space-y-24">
+    @for (project of projects; track project.slug; let odd = $odd) {
+      <app-project-showcase [project]="project" [reverse]="odd" />
+    }
+  </div>
+</section>
+
+<!-- Contact -->
+<section id="contact" class="mx-auto max-w-6xl scroll-mt-16 px-4 py-24 text-center sm:px-6">
+  <p class="text-sm font-medium uppercase tracking-widest text-gray-500">Contact</p>
+  <h2 class="mt-2 text-4xl font-semibold sm:text-6xl">Let's build something.</h2>
+  <p class="mx-auto mt-6 max-w-xl text-lg text-gray-300">{{ profile.contactBlurb }}</p>
+  <a [href]="'mailto:' + profile.email" class="mt-8 inline-block rounded-full bg-white px-6 py-3 font-medium text-black transition hover:bg-gray-200">
+    {{ profile.email }}
+  </a>
+  <app-social-links class="mt-10 justify-center text-gray-400" size="h-8" />
+</section>
