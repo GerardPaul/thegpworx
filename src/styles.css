@@ -54,3 +54,53 @@
     @apply bg-bg font-sans text-fg antialiased transition-colors;
   }
 }
+
+@layer components {
+  /* Chamfered buttons: top-left and bottom-right corners cut at 45° (mecha panel / HUD shape). */
+  .btn {
+    --cut: 12px;
+    @apply relative isolate inline-flex items-center justify-center gap-2 px-7 py-3 font-display text-sm font-semibold uppercase tracking-wider transition;
+    clip-path: polygon(var(--cut) 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%, 0 var(--cut));
+  }
+
+  .btn-sm {
+    --cut: 8px;
+    @apply px-4 py-1.5 text-xs;
+  }
+
+  .btn-primary {
+    @apply bg-accent text-on-accent hover:bg-accent/80;
+  }
+
+  /* Outline: the button's background is the 1px "border"; ::before paints the inside with the same chamfer. */
+  .btn-secondary {
+    @apply bg-fg/30 hover:bg-accent hover:text-accent;
+  }
+
+  .btn-secondary::before {
+    content: '';
+    position: absolute;
+    inset: 1px;
+    z-index: -1;
+    background: rgb(var(--bg));
+    --inner: calc(var(--cut) - 0.6px); /* keeps the diagonal edge 1px thick */
+    clip-path: polygon(var(--inner) 0, 100% 0, 100% calc(100% - var(--inner)), calc(100% - var(--inner)) 100%, 0 100%, 0 var(--inner));
+  }
+
+  /* clip-path hides the outline focus ring, so focused buttons invert instead. */
+  .btn:focus-visible {
+    outline: none;
+  }
+
+  .btn-primary:focus-visible {
+    @apply bg-fg text-bg;
+  }
+
+  .btn-secondary:focus-visible {
+    @apply bg-accent text-accent;
+  }
+
+  .btn-secondary:focus-visible::before {
+    background: rgb(var(--accent) / 0.15);
+  }
+}
