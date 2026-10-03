@@ -23,11 +23,6 @@
     <div>
       <h2 class="text-4xl font-semibold sm:text-6xl">Hey, I'm {{ profile.firstName }}.</h2>
       <p class="mt-6 max-w-2xl text-lg text-fg/80">{{ profile.intro }}</p>
-      <ul class="mt-6 flex flex-wrap gap-2 text-sm">
-        @for (fact of profile.facts; track fact) {
-          <li class="rounded-full bg-fg/10 px-4 py-1.5 text-fg/90">{{ fact }}</li>
-        }
-      </ul>
     </div>
   </div>
 </section>
