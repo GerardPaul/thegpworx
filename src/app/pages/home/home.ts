@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { profile } from '../../data/profile';
 import { projects } from '../../data/projects';
+import { techLogos } from '../../data/tech';
 import { ProjectShowcase } from '../../shared/project-showcase';
 import { SocialLinks } from '../../shared/social-links';
 
@@ -13,4 +14,5 @@ import { SocialLinks } from '../../shared/social-links';
 export class Home {
   profile = profile;
   projects = projects;
+  logos = techLogos;
 }
