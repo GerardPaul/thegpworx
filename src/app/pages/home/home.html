@@ -30,9 +30,10 @@
 <!-- Skills -->
 <section id="skills" class="mx-auto max-w-6xl scroll-mt-16 px-4 py-24 sm:px-6">
   <h2 class="text-4xl font-semibold sm:text-6xl">Tools of the trade<span class="text-error">.</span></h2>
-  <ul class="mt-12 grid grid-cols-2 gap-4 min-[420px]:grid-cols-3 sm:grid-cols-4 lg:grid-cols-6">
+  <!-- flex-wrap + justify-center so an incomplete last row stays centered -->
+  <ul class="mt-12 flex flex-wrap justify-center gap-4">
     @for (skill of profile.skills; track skill) {
-      <li class="group flex flex-col items-center gap-3 rounded-2xl border border-line bg-surface px-4 py-6 text-center transition hover:-translate-y-1 hover:border-accent/60">
+      <li class="group flex w-36 flex-col items-center gap-3 rounded-2xl sm:w-40 lg:w-44 border border-line bg-surface px-4 py-6 text-center transition hover:-translate-y-1 hover:border-accent/60">
         @if (logos[skill]; as logo) {
           <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" [style.--brand]="logo.color"
                class="h-12 w-12 text-fg/70 transition group-hover:scale-110 group-hover:text-[color:var(--brand)]">
