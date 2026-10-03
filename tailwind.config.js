@@ -16,6 +16,7 @@ module.exports = {
       },
       fontFamily: {
         sans: ['Inter', ...defaultTheme.fontFamily.sans],
+        display: ['"Space Grotesk"', ...defaultTheme.fontFamily.sans], // headings
       },
     },
   },
