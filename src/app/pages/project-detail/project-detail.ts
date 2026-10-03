@@ -3,10 +3,11 @@ import { Meta, Title } from '@angular/platform-browser';
 import { RouterLink } from '@angular/router';
 import { projects } from '../../data/projects';
 import { ProjectImage } from '../../shared/project-image';
+import { TechLogos } from '../../shared/tech-logos';
 
 @Component({
   selector: 'app-project-detail',
-  imports: [RouterLink, ProjectImage],
+  imports: [RouterLink, ProjectImage, TechLogos],
   templateUrl: './project-detail.html',
 })
 export class ProjectDetail {

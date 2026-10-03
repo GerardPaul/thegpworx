@@ -6,11 +6,9 @@
       <header class="mt-6">
         <h1 class="text-4xl font-semibold sm:text-6xl">{{ p.title }}</h1>
         <p class="mt-4 max-w-3xl text-xl text-fg/80">{{ p.tagline }}</p>
-        <div class="mt-6 flex flex-wrap items-center gap-2 text-xs">
-          @for (t of p.tech; track t) {
-            <span class="rounded-full border border-fg/15 px-3 py-1 text-fg/80">{{ t }}</span>
-          }
-          @if (p.year) { <span class="ml-2 text-sm text-subtle">{{ p.year }}</span> }
+        <div class="mt-6 flex flex-wrap items-center gap-6">
+          <app-tech-logos [techs]="p.tech" />
+          @if (p.year) { <span class="text-sm text-subtle">{{ p.year }}</span> }
         </div>
         @if (p.links; as links) {
           <div class="mt-6 flex flex-wrap gap-3">
