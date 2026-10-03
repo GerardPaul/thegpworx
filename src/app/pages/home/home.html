@@ -4,7 +4,7 @@
   <p class="mt-4 flex items-center gap-3 text-sm font-medium uppercase tracking-[0.3em] text-fg/80 sm:text-base">
     @for (word of profile.tagline; track word; let last = $last) {
       <span>{{ word }}</span>
-      @if (!last) { <span aria-hidden="true" [class]="$index % 2 ? 'text-accent-yellow' : 'text-accent-red'">●</span> }
+      @if (!last) { <span aria-hidden="true" [class]="$index % 2 ? 'text-warning' : 'text-error'">●</span> }
     }
   </p>
   <h1 class="mt-10 text-lg text-muted sm:text-xl">
@@ -21,7 +21,7 @@
   <div class="grid items-center gap-10 md:grid-cols-[auto,1fr]">
     <img src="assets/images/thegpworx_pixel_char_500.png" width="500" height="734" alt="Pixel-art Gerard" loading="lazy" class="mx-auto h-56 w-auto md:h-72">
     <div>
-      <h2 class="text-4xl font-semibold sm:text-6xl">Hey, I'm {{ profile.firstName }}<span class="text-accent-red">.</span></h2>
+      <h2 class="text-4xl font-semibold sm:text-6xl">Hey, I'm {{ profile.firstName }}<span class="text-error">.</span></h2>
       <p class="mt-6 max-w-2xl text-lg text-fg/80">{{ profile.intro }}</p>
     </div>
   </div>
@@ -29,7 +29,7 @@
 
 <!-- Projects -->
 <section id="projects" class="mx-auto max-w-6xl scroll-mt-16 px-4 py-24 sm:px-6">
-  <h2 class="text-4xl font-semibold sm:text-6xl">Things I've built<span class="text-accent-red">.</span></h2>
+  <h2 class="text-4xl font-semibold sm:text-6xl">Things I've built<span class="text-error">.</span></h2>
   <div class="mt-16 space-y-32 md:space-y-48">
     @for (project of projects; track project.slug; let odd = $odd) {
       <app-project-showcase [project]="project" [reverse]="odd" />
@@ -39,7 +39,7 @@
 
 <!-- Contact -->
 <section id="contact" class="mx-auto max-w-6xl scroll-mt-16 px-4 py-24 text-center sm:px-6">
-  <h2 class="text-4xl font-semibold sm:text-6xl">Let's build something<span class="text-accent-red">.</span></h2>
+  <h2 class="text-4xl font-semibold sm:text-6xl">Let's build something<span class="text-error">.</span></h2>
   <p class="mx-auto mt-6 max-w-xl text-lg text-fg/80">{{ profile.contactBlurb }}</p>
   <a [href]="'mailto:' + profile.email" class="mt-8 inline-block rounded-full bg-accent px-6 py-3 font-medium text-on-accent transition hover:bg-accent/85">
     {{ profile.email }}

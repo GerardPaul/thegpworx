@@ -3,27 +3,32 @@
 @tailwind utilities;
 
 @layer base {
+  /* Dark values are the brand palette; light values are the same hues, darkened for contrast on white. */
   :root {
     --bg: 248 250 252;
+    --surface: 241 245 249;
+    --line: 226 232 240;
     --fg: 10 13 20;
-    --muted: 71 85 105;
-    --subtle: 100 116 139;
-    --accent: 194 65 12;
+    --muted: 75 85 99;
+    --accent: 3 105 161;
     --on-accent: 255 255 255;
-    --accent-red: 198 40 40;
-    --accent-yellow: 224 168 0;
+    --success: 77 124 15;
+    --warning: 202 138 4;
+    --error: 220 38 38;
     color-scheme: light;
   }
 
   .dark {
-    --bg: 10 13 20;
-    --fg: 245 247 250;
-    --muted: 148 160 180;
-    --subtle: 100 112 135;
-    --accent: 255 122 26;
+    --bg: 10 13 20;        /* #0A0D14 */
+    --surface: 17 24 39;   /* #111827 */
+    --line: 31 41 55;      /* #1F2937 */
+    --fg: 245 247 250;     /* #F5F7FA */
+    --muted: 156 163 175;  /* #9CA3AF */
+    --accent: 56 189 248;  /* #38BDF8 */
     --on-accent: 10 13 20;
-    --accent-red: 229 57 53;
-    --accent-yellow: 255 196 0;
+    --success: 163 230 53; /* #A3E635 */
+    --warning: 250 204 21; /* #FACC15 */
+    --error: 248 113 113;  /* #F87171 */
     color-scheme: dark;
   }
 

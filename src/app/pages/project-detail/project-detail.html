@@ -8,7 +8,7 @@
         <p class="mt-4 max-w-3xl text-xl text-fg/80">{{ p.tagline }}</p>
         <div class="mt-6 flex flex-wrap items-center gap-6">
           <app-tech-logos [techs]="p.tech" />
-          @if (p.year) { <span class="text-sm text-subtle">{{ p.year }}</span> }
+          @if (p.year) { <span class="text-sm text-muted">{{ p.year }}</span> }
         </div>
         @if (p.links; as links) {
           <div class="mt-6 flex flex-wrap gap-3">
@@ -30,10 +30,10 @@
         </div>
         @if (p.highlights?.length) {
           <aside>
-            <h2 class="text-sm font-medium uppercase tracking-widest text-subtle">Highlights</h2>
+            <h2 class="text-sm font-medium uppercase tracking-widest text-muted">Highlights</h2>
             <ul class="mt-4 space-y-3">
               @for (h of p.highlights; track h) {
-                <li class="flex gap-3 text-fg/90"><span class="text-accent" aria-hidden="true">✓</span>{{ h }}</li>
+                <li class="flex gap-3 text-fg/90"><span class="text-success" aria-hidden="true">✓</span>{{ h }}</li>
               }
             </ul>
           </aside>
@@ -42,7 +42,7 @@
 
       @if (p.screenshots?.length) {
         <section class="mt-16">
-          <h2 class="text-sm font-medium uppercase tracking-widest text-subtle">Screenshots</h2>
+          <h2 class="text-sm font-medium uppercase tracking-widest text-muted">Screenshots</h2>
           <div class="mt-6 grid gap-6 sm:grid-cols-2">
             @for (shot of p.screenshots; track shot; let i = $index) {
               <app-project-image [src]="shot" [alt]="p.title + ' screenshot ' + (i + 1)" />
@@ -52,16 +52,16 @@
       }
     </article>
 
-    <nav class="mt-20 grid gap-4 border-t border-fg/10 pt-8 sm:grid-cols-2" aria-label="More projects">
+    <nav class="mt-20 grid gap-4 border-t border-line pt-8 sm:grid-cols-2" aria-label="More projects">
       @if (prev(); as prev) {
         <a [routerLink]="['/projects', prev.slug]" class="group">
-          <span class="text-sm text-subtle">← Previous</span>
+          <span class="text-sm text-muted">← Previous</span>
           <span class="block font-medium group-hover:text-accent">{{ prev.title }}</span>
         </a>
       } @else { <span></span> }
       @if (next(); as next) {
         <a [routerLink]="['/projects', next.slug]" class="group sm:text-right">
-          <span class="text-sm text-subtle">Next →</span>
+          <span class="text-sm text-muted">Next →</span>
           <span class="block font-medium group-hover:text-accent">{{ next.title }}</span>
         </a>
       }

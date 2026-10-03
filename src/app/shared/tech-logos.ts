@@ -15,7 +15,7 @@ import { techLogos } from '../data/tech';
               <path [attr.d]="logo.path" />
             </svg>
           } @else {
-            <span class="rounded-full border border-fg/15 px-3 py-1 text-xs text-fg/80">{{ t }}</span>
+            <span class="rounded-full border border-line px-3 py-1 text-xs text-fg/80">{{ t }}</span>
           }
         </li>
       }

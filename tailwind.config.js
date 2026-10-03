@@ -9,16 +9,16 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        bg: token('bg'),         // page background
-        fg: token('fg'),         // primary text; use fg/10 etc. for borders and surfaces
-        muted: token('muted'),   // secondary text
-        subtle: token('subtle'), // labels, captions
-        accent: {
-          DEFAULT: token('accent'),       // thruster orange: buttons, links, active states
-          red: token('accent-red'),       // tiny details only
-          yellow: token('accent-yellow'), // tiny details only
-        },
+        bg: token('bg'),             // page background
+        surface: token('surface'),   // cards, image panels
+        line: token('line'),         // borders, dividers
+        fg: token('fg'),             // primary text
+        muted: token('muted'),       // secondary text
+        accent: token('accent'),     // buttons, links, active/hover states
         'on-accent': token('on-accent'), // text on accent backgrounds
+        success: token('success'),   // checkmarks
+        warning: token('warning'),   // small decorative details
+        error: token('error'),       // small decorative details
       },
       fontFamily: {
         sans: ['Inter', ...defaultTheme.fontFamily.sans],
