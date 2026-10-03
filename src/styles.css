@@ -32,8 +32,15 @@
     color-scheme: dark;
   }
 
+  /* Proximity (not mandatory) so tall sections like Projects stay freely scrollable. */
   html {
-    scroll-behavior: smooth;
+    @apply snap-y snap-proximity;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
   }
 
   :focus-visible {

@@ -8,7 +8,7 @@ import { TechLogos } from './tech-logos';
   selector: 'app-project-showcase',
   imports: [RouterLink, ProjectImage, TechLogos],
   templateUrl: './project-showcase.html',
-  host: { class: 'block' },
+  host: { class: 'block snap-center' }, // snap point inside the long projects list
 })
 export class ProjectShowcase {
   project = input.required<Project>();
