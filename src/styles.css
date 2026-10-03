@@ -3,11 +3,33 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --bg: 250 250 250;
+    --fg: 10 10 10;
+    --muted: 82 82 91;
+    --subtle: 113 113 122;
+    color-scheme: light;
+  }
+
+  .dark {
+    --bg: 0 0 0;
+    --fg: 255 255 255;
+    --muted: 161 161 170;
+    --subtle: 113 113 122;
+    color-scheme: dark;
+  }
+
   html {
     scroll-behavior: smooth;
   }
 
+  :focus-visible {
+    outline: 2px solid rgb(var(--fg));
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
   body {
-    @apply bg-black font-sans text-white antialiased;
+    @apply bg-bg font-sans text-fg antialiased transition-colors;
   }
 }

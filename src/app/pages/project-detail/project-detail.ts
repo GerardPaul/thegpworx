@@ -1,5 +1,5 @@
 import { Component, computed, effect, inject, input } from '@angular/core';
-import { Title } from '@angular/platform-browser';
+import { Meta, Title } from '@angular/platform-browser';
 import { RouterLink } from '@angular/router';
 import { projects } from '../../data/projects';
 import { ProjectImage } from '../../shared/project-image';
@@ -19,6 +19,13 @@ export class ProjectDetail {
 
   constructor() {
     const title = inject(Title);
-    effect(() => title.setTitle(`${this.project()?.title ?? 'Project not found'} — TheGPWorx`));
+    const meta = inject(Meta);
+    const defaultDescription = meta.getTag('name="description"')?.content ?? '';
+    effect(onCleanup => {
+      const p = this.project();
+      title.setTitle(`${p?.title ?? 'Project not found'} — TheGPWorx`);
+      meta.updateTag({ name: 'description', content: p?.tagline ?? defaultDescription });
+      onCleanup(() => meta.updateTag({ name: 'description', content: defaultDescription }));
+    });
   }
 }
