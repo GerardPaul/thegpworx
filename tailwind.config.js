@@ -13,6 +13,11 @@ module.exports = {
         fg: token('fg'),         // primary text; use fg/10 etc. for borders and surfaces
         muted: token('muted'),   // secondary text
         subtle: token('subtle'), // labels, captions
+        accent: {
+          DEFAULT: token('accent'),       // RX-78 blue: buttons, links, active states
+          red: token('accent-red'),       // tiny details only
+          yellow: token('accent-yellow'), // tiny details only
+        },
       },
       fontFamily: {
         sans: ['Inter', ...defaultTheme.fontFamily.sans],

@@ -4,18 +4,24 @@
 
 @layer base {
   :root {
-    --bg: 250 250 250;
-    --fg: 10 10 10;
-    --muted: 82 82 91;
-    --subtle: 113 113 122;
+    --bg: 248 250 252;
+    --fg: 10 13 20;
+    --muted: 71 85 105;
+    --subtle: 100 116 139;
+    --accent: 31 86 224;
+    --accent-red: 198 40 40;
+    --accent-yellow: 224 168 0;
     color-scheme: light;
   }
 
   .dark {
-    --bg: 0 0 0;
-    --fg: 255 255 255;
-    --muted: 161 161 170;
-    --subtle: 113 113 122;
+    --bg: 10 13 20;
+    --fg: 245 247 250;
+    --muted: 148 160 180;
+    --subtle: 100 112 135;
+    --accent: 47 107 255;
+    --accent-red: 229 57 53;
+    --accent-yellow: 255 196 0;
     color-scheme: dark;
   }
 
@@ -24,13 +30,17 @@
   }
 
   :focus-visible {
-    outline: 2px solid rgb(var(--fg));
+    outline: 2px solid rgb(var(--accent));
     outline-offset: 3px;
     border-radius: 4px;
   }
 
   h1, h2, h3 {
     @apply font-display tracking-tight;
+  }
+
+  ::selection {
+    @apply bg-accent text-white;
   }
 
   body {

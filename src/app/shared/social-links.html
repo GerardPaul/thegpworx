@@ -1,10 +1,10 @@
-<a [href]="'mailto:' + profile.email" aria-label="Email" class="transition hover:scale-110 hover:text-fg">
+<a [href]="'mailto:' + profile.email" aria-label="Email" class="transition hover:scale-110 hover:text-accent">
   <svg [class]="size()" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
     <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
   </svg>
 </a>
 @for (s of profile.socials; track s.name) {
-  <a [href]="s.url" target="_blank" rel="noopener" [attr.aria-label]="s.label" class="transition hover:scale-110 hover:text-fg">
+  <a [href]="s.url" target="_blank" rel="noopener" [attr.aria-label]="s.label" class="transition hover:scale-110 hover:text-accent">
     @switch (s.name) {
       @case ('linkedin') {
         <svg [class]="size()" viewBox="0 0 512 512" fill="currentColor" aria-hidden="true">

@@ -12,16 +12,16 @@
     <ul class="flex items-center gap-4 text-sm font-medium sm:gap-8">
       @for (link of links; track link.path) {
         <li>
-          <a [routerLink]="link.path" routerLinkActive="!text-fg" [routerLinkActiveOptions]="{ exact: true }"
-             class="text-muted transition hover:text-fg">{{ link.label }}</a>
+          <a [routerLink]="link.path" routerLinkActive="!text-accent" [routerLinkActiveOptions]="{ exact: true }"
+             class="text-muted transition hover:text-accent">{{ link.label }}</a>
         </li>
       }
       <li>
         <a routerLink="/" fragment="contact"
-           class="rounded-full bg-fg px-4 py-1.5 text-bg transition hover:bg-fg/80">Contact</a>
+           class="rounded-full bg-accent px-4 py-1.5 text-white transition hover:bg-accent/85">Contact</a>
       </li>
       <li>
-        <button type="button" (click)="toggleTheme()" class="flex text-muted transition hover:text-fg"
+        <button type="button" (click)="toggleTheme()" class="flex text-muted transition hover:text-accent"
                 [attr.aria-label]="dark() ? 'Switch to light mode' : 'Switch to dark mode'">
           @if (dark()) {
             <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
