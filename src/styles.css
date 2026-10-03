@@ -8,7 +8,8 @@
     --fg: 10 13 20;
     --muted: 71 85 105;
     --subtle: 100 116 139;
-    --accent: 31 86 224;
+    --accent: 194 65 12;
+    --on-accent: 255 255 255;
     --accent-red: 198 40 40;
     --accent-yellow: 224 168 0;
     color-scheme: light;
@@ -19,7 +20,8 @@
     --fg: 245 247 250;
     --muted: 148 160 180;
     --subtle: 100 112 135;
-    --accent: 47 107 255;
+    --accent: 255 122 26;
+    --on-accent: 10 13 20;
     --accent-red: 229 57 53;
     --accent-yellow: 255 196 0;
     color-scheme: dark;
@@ -40,7 +42,7 @@
   }
 
   ::selection {
-    @apply bg-accent text-white;
+    @apply bg-accent text-on-accent;
   }
 
   body {

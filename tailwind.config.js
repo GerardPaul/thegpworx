@@ -14,10 +14,11 @@ module.exports = {
         muted: token('muted'),   // secondary text
         subtle: token('subtle'), // labels, captions
         accent: {
-          DEFAULT: token('accent'),       // RX-78 blue: buttons, links, active states
+          DEFAULT: token('accent'),       // thruster orange: buttons, links, active states
           red: token('accent-red'),       // tiny details only
           yellow: token('accent-yellow'), // tiny details only
         },
+        'on-accent': token('on-accent'), // text on accent backgrounds
       },
       fontFamily: {
         sans: ['Inter', ...defaultTheme.fontFamily.sans],
