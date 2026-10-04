@@ -1,22 +1,27 @@
-import { Component, DestroyRef, ElementRef, afterNextRender, computed, inject, signal, viewChild } from '@angular/core';
+import { Component, DestroyRef, booleanAttribute, ElementRef, afterNextRender, computed, inject, input, signal, viewChild } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { Project, projects } from '../../data/projects';
-import { TechLogos } from '../../shared/tech-logos';
+import { Project, projects } from '../data/projects';
+import { TechLogos } from './tech-logos';
 
 type Platform = Project['platform'];
 
 /**
- * Home "Projects" section. A Web/Mobile toggle picks the list; the panel stays pinned while
- * each project gets one screen of scroll (one snap stop each). The active project's
- * screenshot cross-fades inside a laptop or phone frame and its text fades in/out.
+ * Projects "scroll story" (home + /projects). A Web/Mobile toggle picks the list; the panel stays
+ * pinned while each project gets one screen of scroll (one snap stop each). The active project's
+ * screenshot cross-fades inside a laptop or phone frame and its text fades in/out. The page
+ * supplies the heading via content projection.
  */
 @Component({
-  selector: 'app-home-projects',
+  selector: 'app-project-story',
   imports: [RouterLink, TechLogos, NgTemplateOutlet],
-  templateUrl: './home-projects.html',
+  templateUrl: './project-story.html',
 })
-export class HomeProjects {
+export class ProjectStory {
+  // True when the header sits directly above this section (/projects): the first snap stop is
+  // pulled up by the header height so the page doesn't load scrolled past the header.
+  belowHeader = input(false, { transform: booleanAttribute });
+
   platforms: { value: Platform; label: string }[] = [
     { value: 'web', label: 'Web' },
     { value: 'mobile', label: 'Mobile' },
@@ -54,9 +59,11 @@ export class HomeProjects {
     this.platform.set(platform);
     this.active.set(0);
     // If we're partway through the section, jump back to its first project.
-    const top = this.section().nativeElement.getBoundingClientRect().top;
-    if (top < 0) scrollTo({ top: scrollY + top, behavior: 'instant' });
+    if (this.section().nativeElement.getBoundingClientRect().top < 0) this.go(0, 'instant');
   }
 
-  pad = (n: number) => String(n).padStart(2, '0');
+  // Scroll to project i's snap stop (honours its scroll-margin).
+  go(i: number, behavior: ScrollBehavior = 'auto') {
+    this.section().nativeElement.querySelectorAll('[data-stop]')[i]?.scrollIntoView({ behavior });
+  }
 }

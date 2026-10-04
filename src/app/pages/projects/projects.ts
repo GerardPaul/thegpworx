@@ -1,22 +1,13 @@
 import { Component } from '@angular/core';
-import { projects } from '../../data/projects';
-import { ProjectShowcase } from '../../shared/project-showcase';
+import { ProjectStory } from '../../shared/project-story';
 
 @Component({
   selector: 'app-projects',
-  imports: [ProjectShowcase],
+  imports: [ProjectStory],
   template: `
-    <section class="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24">
-      <h1 class="text-5xl font-semibold sm:text-7xl">Projects</h1>
-      <p class="mt-4 max-w-2xl text-lg text-muted">Web platforms, mobile apps and everything in between.</p>
-      <div class="mt-16 space-y-32 md:space-y-48">
-        @for (project of projects; track project.slug; let odd = $odd) {
-          <app-project-showcase [project]="project" [reverse]="odd" />
-        }
-      </div>
-    </section>
+    <app-project-story belowHeader>
+      <h1 class="text-4xl font-semibold sm:text-6xl">Projects<span class="text-error">.</span></h1>
+    </app-project-story>
   `,
 })
-export class Projects {
-  projects = projects;
-}
+export class Projects {}
