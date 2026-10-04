@@ -11,7 +11,7 @@ import { ProjectShowcase } from '../../shared/project-showcase';
   selector: 'app-project-rail',
   imports: [ProjectShowcase],
   template: `
-    <section #section id="projects" class="relative">
+    <section #section id="projects" class="relative snap-start">
       <div class="sticky top-0 flex h-[100svh] flex-col justify-center overflow-hidden">
         <div class="mx-auto w-full max-w-6xl px-4 sm:px-6">
           <h2 class="text-4xl font-semibold sm:text-6xl">Things I've built<span class="text-error">.</span></h2>

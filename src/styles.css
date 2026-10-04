@@ -32,6 +32,12 @@
     color-scheme: dark;
   }
 
+  /* Home only: every section is one screen tall, so each scroll lands on a whole section.
+     The projects rail is taller than the screen; browsers scroll freely inside oversized snap areas. */
+  html:has(app-home) {
+    @apply snap-y snap-mandatory;
+  }
+
   @media (prefers-reduced-motion: no-preference) {
     html {
       scroll-behavior: smooth;
