@@ -2,10 +2,8 @@ import { Component, DestroyRef, ElementRef, afterNextRender, inject, viewChild }
 import { projects } from '../../data/projects';
 import { ProjectShowcase } from '../../shared/project-showcase';
 
-const HEADER = 56; // sticky header height (h-14 / 3.5rem)
-
 /**
- * Home "Projects" section: a full-screen panel pinned below the header while the row of
+ * Home "Projects" section: a full-screen panel pinned to the top of the screen while the row of
  * projects slides left as you scroll down. The section is made exactly as tall as the
  * horizontal travel, so vertical scroll distance maps 1:1 to horizontal movement.
  */
@@ -13,8 +11,8 @@ const HEADER = 56; // sticky header height (h-14 / 3.5rem)
   selector: 'app-project-rail',
   imports: [ProjectShowcase],
   template: `
-    <section #section id="projects" class="relative scroll-mt-14">
-      <div class="sticky top-14 flex h-[calc(100svh-3.5rem)] flex-col justify-center overflow-hidden">
+    <section #section id="projects" class="relative">
+      <div class="sticky top-0 flex h-[100svh] flex-col justify-center overflow-hidden">
         <div class="mx-auto w-full max-w-6xl px-4 sm:px-6">
           <h2 class="text-4xl font-semibold sm:text-6xl">Things I've built<span class="text-error">.</span></h2>
         </div>
@@ -44,11 +42,11 @@ export class ProjectRail {
 
       const layout = () => {
         this.travel = Math.max(0, track.scrollWidth - document.documentElement.clientWidth);
-        section.style.height = `${innerHeight - HEADER + this.travel}px`;
+        section.style.height = `${innerHeight + this.travel}px`;
         position();
       };
       const position = () => {
-        const progress = this.travel ? Math.min(1, Math.max(0, (HEADER - section.getBoundingClientRect().top) / this.travel)) : 0;
+        const progress = this.travel ? Math.min(1, Math.max(0, -section.getBoundingClientRect().top / this.travel)) : 0;
         track.style.transform = `translateX(${-progress * this.travel}px)`;
       };
       const onScroll = () => {
@@ -75,7 +73,7 @@ export class ProjectRail {
     track.parentElement!.scrollLeft = 0; // undo the browser's own scroll-into-view; the transform does the moving
     const card = (e.target as HTMLElement).closest('app-project-showcase') as HTMLElement | null;
     if (!card || !this.travel) return;
-    const sectionTop = this.section().nativeElement.getBoundingClientRect().top + scrollY - HEADER;
+    const sectionTop = this.section().nativeElement.getBoundingClientRect().top + scrollY;
     const x = Math.min(this.travel, Math.max(0, card.offsetLeft - parseFloat(getComputedStyle(track).paddingLeft)));
     scrollTo({ top: sectionTop + x });
   }
