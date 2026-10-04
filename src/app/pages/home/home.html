@@ -1,5 +1,5 @@
 <!-- Hero -->
-<section class="flex min-h-[calc(100svh-57px)] snap-start scroll-mt-16 flex-col items-center justify-center px-4 text-center">
+<section class="flex min-h-[calc(100svh-57px)] flex-col items-center justify-center px-4 text-center">
   <img src="assets/images/thegpworx_logo_transparent.png" width="786" height="380" [alt]="profile.brand" class="w-full max-w-3xl invert dark:invert-0">
   <p class="mt-4 flex items-center gap-3 text-sm font-medium uppercase tracking-[0.3em] text-fg/80 sm:text-base">
     @for (word of profile.tagline; track word; let last = $last) {
@@ -15,7 +15,7 @@
 </section>
 
 <!-- About -->
-<section id="about" class="mx-auto max-w-6xl snap-start scroll-mt-16 px-4 py-24 sm:px-6">
+<section id="about" class="mx-auto max-w-6xl scroll-mt-16 px-4 py-24 sm:px-6">
   <div class="grid items-center gap-10 md:grid-cols-[auto,1fr]">
     <img src="assets/images/thegpworx_pixel_char_500.png" width="500" height="734" alt="Pixel-art Gerard" loading="lazy" class="mx-auto h-56 w-auto md:h-72">
     <div>
@@ -26,7 +26,7 @@
 </section>
 
 <!-- Skills -->
-<section id="skills" class="mx-auto max-w-6xl snap-start scroll-mt-16 px-4 py-24 sm:px-6">
+<section id="skills" class="mx-auto max-w-6xl scroll-mt-16 px-4 py-24 sm:px-6">
   <h2 class="text-4xl font-semibold sm:text-6xl">Tools of the trade<span class="text-error">.</span></h2>
   <!-- flex-wrap + justify-center so an incomplete last row stays centered -->
   <ul class="mt-12 flex flex-wrap justify-center gap-4">
@@ -45,7 +45,7 @@
 </section>
 
 <!-- Projects -->
-<section id="projects" class="mx-auto max-w-6xl snap-start scroll-mt-16 px-4 py-24 sm:px-6">
+<section id="projects" class="mx-auto max-w-6xl scroll-mt-16 px-4 py-24 sm:px-6">
   <h2 class="text-4xl font-semibold sm:text-6xl">Things I've built<span class="text-error">.</span></h2>
   <div class="mt-16 space-y-32 md:space-y-48">
     @for (project of projects; track project.slug; let odd = $odd) {
@@ -55,7 +55,7 @@
 </section>
 
 <!-- Contact -->
-<section id="contact" class="mx-auto max-w-6xl snap-start scroll-mt-16 px-4 py-24 text-center sm:px-6">
+<section id="contact" class="mx-auto max-w-6xl scroll-mt-16 px-4 py-24 text-center sm:px-6">
   <h2 class="text-4xl font-semibold sm:text-6xl">Let's build something<span class="text-error">.</span></h2>
   <p class="mx-auto mt-6 max-w-xl text-lg text-fg/80">{{ profile.contactBlurb }}</p>
   <a [href]="'mailto:' + profile.email" class="btn btn-primary mt-8 normal-case tracking-normal">
