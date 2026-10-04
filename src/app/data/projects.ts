@@ -5,6 +5,7 @@ export interface Project {
   description: string[];  // paragraphs for the detail page
   highlights?: string[];  // key features, shown as a list on the detail page
   tech: string[];
+  platform: 'web' | 'mobile'; // home page toggle + device frame (laptop / phone)
   cover?: string;         // main screenshot; omit until provided -> placeholder
   screenshots?: string[]; // gallery on the detail page
   links?: { live?: string; repo?: string };
@@ -31,6 +32,7 @@ export const projects: Project[] = [
       'Review management, monitoring and replies',
     ],
     tech: ['Laravel', 'Angular'],
+    platform: 'web',
     cover: img('slmp'),
   },
   {
@@ -42,6 +44,7 @@ export const projects: Project[] = [
       'The app is called MOPAC, or Mobile OPAC (Online Public Access Catalog).',
     ],
     tech: ['Android', 'PHP'],
+    platform: 'mobile',
     cover: img('mopac'),
   },
   {
@@ -58,6 +61,7 @@ export const projects: Project[] = [
       'Push notification on approval',
     ],
     tech: ['Android', 'PHP'],
+    platform: 'mobile',
     cover: img('avc-reservation'),
   },
   {
@@ -74,6 +78,7 @@ export const projects: Project[] = [
       'Role-based privileges',
     ],
     tech: ['PHP', 'jQuery'],
+    platform: 'web',
     cover: img('dts'),
   },
   {
@@ -85,6 +90,7 @@ export const projects: Project[] = [
       'This app lets students inquire about their enrollment and view and verify their grades and other records — everything the Akan kiosk does, in a more accessible and convenient way.',
     ],
     tech: ['Android', 'PHP'],
+    platform: 'mobile',
     cover: img('mak'),
   },
   {
@@ -95,6 +101,7 @@ export const projects: Project[] = [
       'A web portal I created as an intern to help the company track its inventory records.',
     ],
     tech: ['PHP', 'jQuery'],
+    platform: 'web',
     cover: img('sig-inventory'),
   },
   {
@@ -106,6 +113,7 @@ export const projects: Project[] = [
       'The app connects to a web server holding all information about the college, its courses and students.',
     ],
     tech: ['Android', 'PHP'],
+    platform: 'mobile',
     cover: img('ccam'),
   },
   {
@@ -117,6 +125,7 @@ export const projects: Project[] = [
       'It handles both enrollment and examinations for students and instructors in our college.',
     ],
     tech: ['PHP', 'jQuery'],
+    platform: 'web',
     cover: img('portex'),
   },
 ];
