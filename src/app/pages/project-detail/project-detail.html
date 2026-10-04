@@ -1,5 +1,5 @@
 <div class="mx-auto max-w-5xl px-4 py-12 sm:px-6 sm:py-16">
-  <a routerLink="/projects" class="text-sm text-muted hover:text-accent">← All projects</a>
+  <a routerLink="/projects" class="btn btn-secondary btn-sm">← All projects</a>
 
   @if (project(); as p) {
     <article>
@@ -54,16 +54,16 @@
 
     <nav class="mt-20 grid gap-4 border-t border-line pt-8 sm:grid-cols-2" aria-label="More projects">
       @if (prev(); as prev) {
-        <a [routerLink]="['/projects', prev.slug]" class="group">
-          <span class="text-sm text-muted">← Previous</span>
-          <span class="block font-medium group-hover:text-accent">{{ prev.title }}</span>
-        </a>
+        <div class="flex flex-col items-start gap-3">
+          <a [routerLink]="['/projects', prev.slug]" class="btn btn-secondary" [attr.aria-label]="'Previous project: ' + prev.title">← Previous</a>
+          <span class="text-sm text-muted">{{ prev.title }}</span>
+        </div>
       } @else { <span></span> }
       @if (next(); as next) {
-        <a [routerLink]="['/projects', next.slug]" class="group sm:text-right">
-          <span class="text-sm text-muted">Next →</span>
-          <span class="block font-medium group-hover:text-accent">{{ next.title }}</span>
-        </a>
+        <div class="flex flex-col items-start gap-3 sm:items-end sm:text-right">
+          <a [routerLink]="['/projects', next.slug]" class="btn btn-secondary" [attr.aria-label]="'Next project: ' + next.title">Next →</a>
+          <span class="text-sm text-muted">{{ next.title }}</span>
+        </div>
       }
     </nav>
   } @else {
