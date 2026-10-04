@@ -55,13 +55,13 @@
     <nav class="mt-20 grid gap-4 border-t border-line pt-8 sm:grid-cols-2" aria-label="More projects">
       @if (prev(); as prev) {
         <div class="flex flex-col items-start gap-3">
-          <a [routerLink]="['/projects', prev.slug]" class="btn btn-secondary" [attr.aria-label]="'Previous project: ' + prev.title">← Previous</a>
+          <a [routerLink]="['/projects', prev.slug]" class="btn btn-secondary" [attr.aria-label]="'Previous project: ' + prev.title">Previous</a>
           <span class="text-sm text-muted">{{ prev.title }}</span>
         </div>
       } @else { <span></span> }
       @if (next(); as next) {
         <div class="flex flex-col items-start gap-3 sm:items-end sm:text-right">
-          <a [routerLink]="['/projects', next.slug]" class="btn btn-secondary" [attr.aria-label]="'Next project: ' + next.title">Next →</a>
+          <a [routerLink]="['/projects', next.slug]" class="btn btn-secondary" [attr.aria-label]="'Next project: ' + next.title">Next</a>
           <span class="text-sm text-muted">{{ next.title }}</span>
         </div>
       }
