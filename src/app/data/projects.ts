@@ -16,25 +16,26 @@ const img = (slug: string, file = 'cover.png') => `assets/images/projects/${slug
 
 // Array order = display order.
 export const projects: Project[] = [
-  {
-    slug: 'slmp',
-    title: 'Surefire Local Marketing Platform',
-    tagline: 'All-in-one marketing software that makes online marketing easy for local businesses.',
-    description: [
-      'Surefire Local Marketing Platform (SLMP) is an all-in-one marketing software that helps businesses make online marketing easy.',
-      'Clients can create and publish content to all their social media channels, send marketing texts and emails to increase repeat business, track SEO results across keywords, update business info across 70+ channels at once, automate lead generation and sales, and streamline review management, monitoring and replies.',
-    ],
-    highlights: [
-      'Publish content to every social channel at once',
-      'SMS and email marketing campaigns',
-      'SEO keyword tracking',
-      'Business listings synced across 70+ channels',
-      'Review management, monitoring and replies',
-    ],
-    tech: ['Laravel', 'Angular'],
-    platform: 'web',
-    cover: img('slmp'),
-  },
+  // SLMP hidden for now — uncomment to show it again.
+  // {
+  //   slug: 'slmp',
+  //   title: 'Surefire Local Marketing Platform',
+  //   tagline: 'All-in-one marketing software that makes online marketing easy for local businesses.',
+  //   description: [
+  //     'Surefire Local Marketing Platform (SLMP) is an all-in-one marketing software that helps businesses make online marketing easy.',
+  //     'Clients can create and publish content to all their social media channels, send marketing texts and emails to increase repeat business, track SEO results across keywords, update business info across 70+ channels at once, automate lead generation and sales, and streamline review management, monitoring and replies.',
+  //   ],
+  //   highlights: [
+  //     'Publish content to every social channel at once',
+  //     'SMS and email marketing campaigns',
+  //     'SEO keyword tracking',
+  //     'Business listings synced across 70+ channels',
+  //     'Review management, monitoring and replies',
+  //   ],
+  //   tech: ['Laravel', 'Angular'],
+  //   platform: 'web',
+  //   cover: img('slmp'),
+  // },
   {
     slug: 'mopac',
     title: 'MSU Mobile Library Catalog',
