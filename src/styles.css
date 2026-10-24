@@ -53,13 +53,23 @@
     @apply font-display;
   }
 
+  /* Jersey 10 (body text) has a small x-height; scale it up to normal reading size.
+     Pixelify elements opt out so headings/buttons/labels keep their sizes. */
+  body {
+    font-size-adjust: 0.56;
+  }
+
+  h1, h2, h3, .font-display, .btn {
+    font-size-adjust: none;
+  }
+
   ::selection {
     @apply bg-accent text-on-accent;
   }
 
   /* Faint pixel grid behind everything, like graph paper / a game map. */
   body {
-    @apply bg-bg font-display text-fg antialiased transition-colors;
+    @apply bg-bg font-body text-fg antialiased transition-colors;
     background-image:
       linear-gradient(rgb(var(--fg) / 0.035) 1px, transparent 1px),
       linear-gradient(90deg, rgb(var(--fg) / 0.035) 1px, transparent 1px);

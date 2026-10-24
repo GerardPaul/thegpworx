@@ -21,7 +21,8 @@ module.exports = {
         error: token('error'),       // small decorative details
       },
       fontFamily: {
-        display: ['"Pixelify Sans"', ...defaultTheme.fontFamily.sans], // pixel font: headings, buttons, labels
+        display: ['"Pixelify Sans"', ...defaultTheme.fontFamily.sans], // pixel font: headings, buttons, labels, nav
+        body: ['"Jersey 10"', ...defaultTheme.fontFamily.sans], // pixel font: paragraphs / descriptive text
       },
     },
   },
