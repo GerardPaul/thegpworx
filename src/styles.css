@@ -59,7 +59,7 @@
 
   /* Faint pixel grid behind everything, like graph paper / a game map. */
   body {
-    @apply bg-bg font-sans text-fg antialiased transition-colors;
+    @apply bg-bg font-display text-fg antialiased transition-colors;
     background-image:
       linear-gradient(rgb(var(--fg) / 0.035) 1px, transparent 1px),
       linear-gradient(90deg, rgb(var(--fg) / 0.035) 1px, transparent 1px);

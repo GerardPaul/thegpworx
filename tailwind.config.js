@@ -21,7 +21,6 @@ module.exports = {
         error: token('error'),       // small decorative details
       },
       fontFamily: {
-        sans: ['Inter', ...defaultTheme.fontFamily.sans],
         display: ['"Pixelify Sans"', ...defaultTheme.fontFamily.sans], // pixel font: headings, buttons, labels
       },
     },
