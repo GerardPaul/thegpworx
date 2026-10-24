@@ -12,7 +12,7 @@
       @for (link of links; track link.path) {
         <li>
           <a [routerLink]="link.path" routerLinkActive="!text-accent" [routerLinkActiveOptions]="{ exact: true }"
-             class="text-muted transition hover:text-accent">{{ link.label }}</a>
+             class="font-display text-base text-muted transition-colors hover:text-accent">{{ link.label }}</a>
         </li>
       }
       <li>

@@ -1,10 +1,10 @@
 <!-- Hero -->
 <section class="flex min-h-[calc(100svh-3.5rem)] flex-col items-center justify-center px-4 text-center">
   <img src="assets/images/thegpworx_logo_transparent.png" width="786" height="380" [alt]="profile.brand" class="w-full max-w-3xl invert dark:invert-0">
-  <p class="mt-4 flex items-center gap-3 text-sm font-medium uppercase tracking-[0.3em] text-fg/80 sm:text-base">
+  <p class="mt-4 flex items-center gap-3 font-display text-base uppercase tracking-[0.3em] text-fg/80 sm:text-lg">
     @for (word of profile.tagline; track word; let last = $last) {
       <span>{{ word }}</span>
-      @if (!last) { <span aria-hidden="true" [class]="$index % 2 ? 'text-warning' : 'text-error'">●</span> }
+      @if (!last) { <span aria-hidden="true" class="inline-block h-2 w-2" [class]="$index % 2 ? 'bg-warning' : 'bg-error'"></span> }
     }
   </p>
   <h1 class="sr-only">{{ profile.name }}, {{ profile.role }}</h1>
@@ -17,17 +17,21 @@
 <!-- About -->
 <section id="about" class="mx-auto flex min-h-[100svh] max-w-6xl snap-start flex-col justify-center px-4 py-16 sm:px-6">
   <div class="grid items-center gap-10 md:grid-cols-[auto,1fr]">
-    <img src="assets/images/thegpworx_pixel_char_500.png" width="500" height="734" alt="Pixel-art Gerard" loading="lazy" class="mx-auto h-56 w-auto md:h-72">
+    <img src="assets/images/thegpworx_pixel_char_500.png" width="500" height="734" alt="Pixel-art Gerard" loading="lazy" class="mx-auto h-56 w-auto [image-rendering:pixelated] md:h-72">
     <div>
-      <h2 class="text-4xl font-semibold sm:text-6xl">Hey, I'm {{ profile.firstName }}<span class="text-error">.</span></h2>
-      <p class="mt-6 max-w-2xl text-lg text-fg/80">{{ profile.intro }}</p>
+      <h2 class="cursor text-4xl font-semibold sm:text-6xl">Hey, I'm {{ profile.firstName }}<span class="text-error">.</span></h2>
+      <!-- RPG-style dialog box: the pixel character "says" the intro -->
+      <div class="pixel-border relative mt-10 max-w-2xl bg-surface px-5 pb-5 pt-7 sm:px-6">
+        <span class="absolute -top-4 left-4 bg-accent px-3 py-0.5 font-display text-sm uppercase tracking-wider text-on-accent">{{ profile.firstName }}</span>
+        <p class="text-lg text-fg/80">{{ profile.intro }}</p>
+      </div>
     </div>
   </div>
 </section>
 
 <!-- Skills -->
 <section id="skills" class="mx-auto flex min-h-[100svh] max-w-6xl snap-start flex-col justify-center px-4 py-16 sm:px-6">
-  <h2 class="text-4xl font-semibold sm:text-6xl">Tools of the trade<span class="text-error">.</span></h2>
+  <h2 class="cursor text-4xl font-semibold sm:text-6xl">Tools of the trade<span class="text-error">.</span></h2>
   <!-- flex-wrap + justify-center so an incomplete last row stays centered -->
   <ul class="mt-12 flex flex-wrap justify-center gap-4">
     @for (skill of profile.skills; track skill) {
@@ -46,12 +50,12 @@
 
 <!-- Projects -->
 <app-project-story>
-  <h2 class="text-4xl font-semibold sm:text-6xl">Things I've built<span class="text-error">.</span></h2>
+  <h2 class="cursor text-4xl font-semibold sm:text-6xl">Things I've built<span class="text-error">.</span></h2>
 </app-project-story>
 
 <!-- Contact -->
 <section id="contact" class="mx-auto flex min-h-[100svh] max-w-6xl snap-start flex-col items-center justify-center px-4 py-16 text-center sm:px-6">
-  <h2 class="text-4xl font-semibold sm:text-6xl">Let's build something<span class="text-error">.</span></h2>
+  <h2 class="cursor text-4xl font-semibold sm:text-6xl">Let's build something<span class="text-error">.</span></h2>
   <p class="mx-auto mt-6 max-w-xl text-lg text-fg/80">{{ profile.contactBlurb }}</p>
   <a [href]="'mailto:' + profile.email" class="btn btn-primary mt-8 normal-case tracking-normal">
     {{ profile.email }}

@@ -30,7 +30,7 @@
         </div>
         @if (p.highlights?.length) {
           <aside>
-            <h2 class="text-sm font-medium uppercase tracking-widest text-muted">Highlights</h2>
+            <h2 class="text-sm uppercase tracking-widest text-muted">Highlights</h2>
             <ul class="mt-4 space-y-3">
               @for (h of p.highlights; track h) {
                 <li class="flex gap-3 text-fg/90"><span class="text-success" aria-hidden="true">✓</span>{{ h }}</li>
@@ -42,7 +42,7 @@
 
       @if (p.screenshots?.length) {
         <section class="mt-16">
-          <h2 class="text-sm font-medium uppercase tracking-widest text-muted">Screenshots</h2>
+          <h2 class="text-sm uppercase tracking-widest text-muted">Screenshots</h2>
           <div class="mt-6 grid gap-6 sm:grid-cols-2">
             @for (shot of p.screenshots; track shot; let i = $index) {
               <app-project-image [src]="shot" [alt]="p.title + ' screenshot ' + (i + 1)" />
