@@ -87,6 +87,21 @@
       var(--px-off) var(--px-off) 0 0 var(--px-shadow);
   }
 
+  /*
+   * Pixel corners: clips each corner into a two-step staircase of --px-s pixels — the 8-bit
+   * version of a rounded corner. Used for device frames; nest with a smaller --px-s inside.
+   */
+  .pixel-corners {
+    --px-s: 4px;
+    --s2: calc(var(--px-s) * 2);
+    clip-path: polygon(
+      0 var(--s2), var(--px-s) var(--s2), var(--px-s) var(--px-s), var(--s2) var(--px-s), var(--s2) 0,
+      calc(100% - var(--s2)) 0, calc(100% - var(--s2)) var(--px-s), calc(100% - var(--px-s)) var(--px-s), calc(100% - var(--px-s)) var(--s2), 100% var(--s2),
+      100% calc(100% - var(--s2)), calc(100% - var(--px-s)) calc(100% - var(--s2)), calc(100% - var(--px-s)) calc(100% - var(--px-s)), calc(100% - var(--s2)) calc(100% - var(--px-s)), calc(100% - var(--s2)) 100%,
+      var(--s2) 100%, var(--s2) calc(100% - var(--px-s)), var(--px-s) calc(100% - var(--px-s)), var(--px-s) calc(100% - var(--s2)), 0 calc(100% - var(--s2))
+    );
+  }
+
   /* Pixel buttons: notched border + hard shadow; hover presses the button into its shadow in pixel steps. */
   .btn {
     @apply pixel-border inline-flex items-center justify-center gap-2 px-6 py-2.5 font-display text-base font-semibold uppercase tracking-wide;

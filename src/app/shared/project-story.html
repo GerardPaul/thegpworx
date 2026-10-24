@@ -17,21 +17,24 @@
         <!-- Device frame: fixed-height slot so switching laptop/phone doesn't shift the layout -->
         <div class="flex h-72 items-center justify-center md:order-last md:col-span-3 md:h-[32rem]">
           @if (platform() === 'web') {
+            <!-- Pixel-art laptop: stepped-corner bezel with a camera pixel, screen, and base with hinge notch -->
             <div class="mx-auto w-full max-w-sm md:max-w-2xl">
-              <div class="rounded-t-xl border-[10px] border-b-[16px] border-line bg-line ring-1 ring-fg/10 md:border-[14px] md:border-b-[22px]">
-                <div class="relative aspect-[16/10] overflow-hidden bg-surface">
+              <div class="pixel-corners relative bg-fg/20 p-2.5 pb-4 [--px-s:4px] md:p-3.5 md:pb-6 md:[--px-s:6px]">
+                <div class="absolute left-1/2 top-1 h-1 w-1 -translate-x-1/2 bg-fg/30 md:top-1.5 md:h-1.5 md:w-1.5"></div>
+                <div class="pixel-corners relative aspect-[16/10] overflow-hidden bg-surface [--px-s:2px]">
                   <ng-container [ngTemplateOutlet]="screens" [ngTemplateOutletContext]="{ fit: 'object-cover object-top' }" />
                 </div>
               </div>
-              <div class="relative -mx-[6%] h-3 rounded-b-xl bg-fg/20 ring-1 ring-fg/10 md:h-4">
-                <div class="absolute left-1/2 top-0 h-1.5 w-1/5 -translate-x-1/2 rounded-b-md bg-fg/10"></div>
+              <div class="pixel-corners relative -mx-[6%] h-3 bg-fg/25 [--px-s:3px] md:h-4 md:[--px-s:4px]">
+                <div class="absolute left-1/2 top-0 h-1.5 w-1/5 -translate-x-1/2 bg-fg/10"></div>
               </div>
             </div>
           } @else {
-            <div class="mx-auto aspect-[9/19.5] w-32 rounded-[2.25rem] border-[8px] border-line bg-line ring-1 ring-fg/10 md:w-56 md:rounded-[2.75rem] md:border-[10px]">
-              <div class="relative h-full w-full overflow-hidden rounded-[1.75rem] bg-surface md:rounded-[2.1rem]">
+            <!-- Pixel-art phone: stepped-corner body and screen, pixel notch -->
+            <div class="pixel-corners mx-auto aspect-[9/19.5] w-32 bg-fg/20 p-2 [--px-s:6px] md:w-56 md:p-2.5 md:[--px-s:10px]">
+              <div class="pixel-corners relative h-full w-full overflow-hidden bg-surface [--px-s:4px] md:[--px-s:7px]">
                 <ng-container [ngTemplateOutlet]="screens" [ngTemplateOutletContext]="{ fit: 'object-contain p-3' }" />
-                <div class="absolute left-1/2 top-2 z-10 h-4 w-1/3 -translate-x-1/2 rounded-full bg-line md:h-5"></div>
+                <div class="absolute left-1/2 top-2 z-10 h-3 w-1/3 -translate-x-1/2 bg-fg/20 md:top-3 md:h-4"></div>
               </div>
             </div>
           }
