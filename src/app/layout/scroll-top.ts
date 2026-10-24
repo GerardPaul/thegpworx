@@ -7,8 +7,9 @@ import { Component, DestroyRef, afterNextRender, inject, signal } from '@angular
     <button type="button" (click)="toTop()" aria-label="Back to top"
             class="btn btn-secondary fixed bottom-6 right-6 z-30 px-3 py-3 transition-opacity duration-300"
             [class.invisible]="!visible()" [class.opacity-0]="!visible()">
-      <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 10.5 12 3m0 0 7.5 7.5M12 3v18" />
+      <!-- Arrow: Pixelarticons (MIT, Gerrit Halfmann) -->
+      <svg class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M11 20h2V4h-2zm2-12h2V6h-2zm2 2h2V8h-2zm2 2h2v-2h-2zm-6-4H9V6h2z" /><path d="M15 10H7V8h8zm2 2H5v-2h12z" />
       </svg>
     </button>
   `,

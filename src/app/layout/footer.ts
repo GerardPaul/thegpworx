@@ -7,7 +7,7 @@ import { SocialLinks } from '../shared/social-links';
   template: `
     <footer class="snap-end border-t-4 border-dashed border-line px-4 py-10 text-center text-sm text-muted">
       <app-social-links class="mb-4 justify-center" size="h-5" />
-      <p class="font-display">© {{ year }} TheGPWorx. All rights reserved.</p>
+      <p class="font-display"><span class="font-sans">©</span> {{ year }} TheGPWorx. All rights reserved.</p>
     </footer>
   `,
 })
