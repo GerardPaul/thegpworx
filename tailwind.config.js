@@ -22,7 +22,7 @@ module.exports = {
       },
       fontFamily: {
         sans: ['Inter', ...defaultTheme.fontFamily.sans],
-        display: ['"Space Grotesk"', ...defaultTheme.fontFamily.sans], // headings
+        display: ['"Pixelify Sans"', ...defaultTheme.fontFamily.sans], // pixel font: headings, buttons, labels
       },
     },
   },

@@ -45,70 +45,116 @@
   }
 
   :focus-visible {
-    outline: 2px solid rgb(var(--accent));
-    outline-offset: 3px;
-    border-radius: 4px;
+    outline: 3px dashed rgb(var(--accent));
+    outline-offset: 4px;
   }
 
   h1, h2, h3 {
-    @apply font-display tracking-tight;
+    @apply font-display;
   }
 
   ::selection {
     @apply bg-accent text-on-accent;
   }
 
+  /* Faint pixel grid behind everything, like graph paper / a game map. */
   body {
     @apply bg-bg font-sans text-fg antialiased transition-colors;
+    background-image:
+      linear-gradient(rgb(var(--fg) / 0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(var(--fg) / 0.035) 1px, transparent 1px);
+    background-size: 32px 32px;
   }
 }
 
 @layer components {
-  /* Chamfered buttons: top-left and bottom-right corners cut at 45° (mecha panel / HUD shape). */
+  /*
+   * Pixel border: a hard --px-b border with the four corner pixels notched out, drawn with
+   * outset box-shadows (so it adds no layout size — elements get margin: --px-b to make room),
+   * plus an optional solid drop shadow offset down-right (--px-shadow).
+   */
+  .pixel-border {
+    --px-b: 4px;
+    --px-c: rgb(var(--line));
+    --px-shadow: transparent;
+    --px-off: calc(var(--px-b) * 2);
+    margin: var(--px-b);
+    box-shadow:
+      0 calc(var(--px-b) * -1) 0 0 var(--px-c),
+      0 var(--px-b) 0 0 var(--px-c),
+      calc(var(--px-b) * -1) 0 0 0 var(--px-c),
+      var(--px-b) 0 0 0 var(--px-c),
+      var(--px-off) var(--px-off) 0 0 var(--px-shadow);
+  }
+
+  /* Pixel buttons: notched border + hard shadow; hover presses the button into its shadow in pixel steps. */
   .btn {
-    --cut: 12px;
-    @apply relative isolate inline-flex items-center justify-center gap-2 px-7 py-3 font-display text-sm font-semibold uppercase tracking-wider transition;
-    clip-path: polygon(var(--cut) 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%, 0 var(--cut));
+    @apply pixel-border inline-flex items-center justify-center gap-2 px-6 py-2.5 font-display text-base font-semibold uppercase tracking-wide;
+    transition: transform 0.12s steps(2), box-shadow 0.12s steps(2), background-color 0.12s steps(2), color 0.12s steps(2);
+  }
+
+  .btn:hover {
+    --px-off: var(--px-b);
+    transform: translate(calc(var(--px-b) / 2), calc(var(--px-b) / 2));
+  }
+
+  .btn:active {
+    --px-off: 0px;
+    transform: translate(var(--px-b), var(--px-b));
   }
 
   .btn-sm {
-    --cut: 8px;
-    @apply px-4 py-1.5 text-xs;
+    --px-b: 3px;
+    @apply px-3 py-0.5 text-sm;
   }
 
   .btn-primary {
-    @apply bg-accent text-on-accent hover:bg-accent/80;
+    --px-c: color-mix(in srgb, rgb(var(--accent)) 55%, rgb(var(--fg)));
+    --px-shadow: rgb(var(--fg) / 0.25);
+    @apply bg-accent text-on-accent;
   }
 
-  /* Outline: the button's background is the 1px "border"; ::before paints the inside with the same chamfer. */
   .btn-secondary {
-    @apply bg-fg/30 hover:bg-accent hover:text-accent;
+    --px-c: rgb(var(--fg) / 0.7);
+    --px-shadow: rgb(var(--fg) / 0.15);
+    @apply bg-bg text-fg;
   }
 
-  .btn-secondary::before {
+  .btn-secondary:hover {
+    --px-c: rgb(var(--accent));
+    @apply text-accent;
+  }
+
+  /* Blinking block cursor after a heading, like a terminal / game text box. */
+  .cursor::after {
     content: '';
-    position: absolute;
-    inset: 1px;
-    z-index: -1;
-    background: rgb(var(--bg));
-    --inner: calc(var(--cut) - 0.6px); /* keeps the diagonal edge 1px thick */
-    clip-path: polygon(var(--inner) 0, 100% 0, 100% calc(100% - var(--inner)), calc(100% - var(--inner)) 100%, 0 100%, 0 var(--inner));
+    display: inline-block;
+    width: 0.45em;
+    height: 0.8em;
+    margin-left: 0.15em;
+    background: rgb(var(--accent));
+    animation: blink 1.1s steps(1, end) infinite;
   }
 
-  /* clip-path hides the outline focus ring, so focused buttons invert instead. */
-  .btn:focus-visible {
-    outline: none;
+  /* Pixel hop for icons/tiles on hover — moves in whole steps, not a smooth slide. */
+  .hop:hover,
+  .group:hover .group-hop {
+    animation: hop 0.4s steps(2) 1;
   }
 
-  .btn-primary:focus-visible {
-    @apply bg-fg text-bg;
+  @keyframes blink {
+    50% { opacity: 0; }
   }
 
-  .btn-secondary:focus-visible {
-    @apply bg-accent text-accent;
+  @keyframes hop {
+    50% { transform: translateY(-6px); }
   }
 
-  .btn-secondary:focus-visible::before {
-    background: rgb(var(--accent) / 0.15);
+  @media (prefers-reduced-motion: reduce) {
+    .cursor::after,
+    .hop:hover,
+    .group:hover .group-hop {
+      animation: none;
+    }
   }
 }
