@@ -38,12 +38,12 @@
         </div>
 
         <div class="md:col-span-2">
-          <!-- Progress dots: active one stretches into an accent pill; click to jump -->
+          <!-- Progress pixels: active one stretches into an accent bar; click to jump -->
           <div class="flex items-center gap-2">
             @for (p of list(); track p.slug; let i = $index) {
               <button type="button" (click)="go(i)" [attr.aria-label]="'Show ' + p.title" [attr.aria-current]="i === active()"
-                      class="h-2 rounded-full transition-all duration-300"
-                      [class]="i === active() ? 'w-8 bg-accent' : 'w-2 bg-fg/25 hover:bg-fg/50'"></button>
+                      class="h-2.5 transition-all duration-300 [transition-timing-function:steps(3)]"
+                      [class]="i === active() ? 'w-8 bg-accent' : 'w-2.5 bg-fg/25 hover:bg-fg/50'"></button>
             }
           </div>
 

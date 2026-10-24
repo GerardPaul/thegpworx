@@ -12,7 +12,7 @@ import { Component, input } from '@angular/core';
       </div>
     }
   `,
-  host: { class: 'block aspect-video overflow-hidden rounded-2xl border border-line bg-surface' },
+  host: { class: 'pixel-border block aspect-video overflow-hidden bg-surface' },
 })
 export class ProjectImage {
   src = input<string>();

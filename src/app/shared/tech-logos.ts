@@ -10,12 +10,12 @@ import { techLogos } from '../data/tech';
         <li>
           @if (logos[t]; as logo) {
             <svg role="img" [attr.aria-label]="t" viewBox="0 0 24 24" fill="currentColor" [style.--brand]="logo.color"
-                 class="h-7 w-7 text-fg/70 transition hover:scale-110 hover:text-[color:var(--brand)]">
+                 class="hop h-7 w-7 text-fg/70 transition-colors hover:text-[color:var(--brand)]">
               <title>{{ t }}</title>
               <path [attr.d]="logo.path" />
             </svg>
           } @else {
-            <span class="rounded-full border border-line px-3 py-1 text-xs text-fg/80">{{ t }}</span>
+            <span class="pixel-border px-2 py-0.5 font-display text-xs text-fg/80 [--px-b:2px]">{{ t }}</span>
           }
         </li>
       }
