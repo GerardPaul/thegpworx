@@ -45,6 +45,8 @@ export interface Settings {
   glow: boolean;
   caps: boolean;
   imageSize: number; // 0.25..3, 1 = covers the frame
+  imageX: number; // -0.5..0.5 of frame width
+  imageY: number; // -0.5..0.5 of frame height
   vizSize: number; // 0.25..1.5
   vizX: number; // -0.5..0.5 of frame width
   vizY: number; // -0.5..0.5 of frame height
@@ -52,6 +54,8 @@ export interface Settings {
 
 export const RANGES = {
   imageSize: [0.25, 3],
+  imageX: [-0.5, 0.5],
+  imageY: [-0.5, 0.5],
   vizSize: [0.25, 1.5],
   vizX: [-0.5, 0.5],
   vizY: [-0.5, 0.5],
@@ -72,6 +76,8 @@ export const DEFAULTS: Settings = {
   glow: false,
   caps: false,
   imageSize: 1,
+  imageX: 0,
+  imageY: 0,
   vizSize: 1,
   vizX: 0,
   vizY: 0,
@@ -102,6 +108,8 @@ export function sanitize(stored: unknown): Settings {
     glow: pick('glow', typeof s['glow'] === 'boolean'),
     caps: pick('caps', typeof s['caps'] === 'boolean'),
     imageSize: pick('imageSize', between(s['imageSize'], ...RANGES.imageSize)),
+    imageX: pick('imageX', between(s['imageX'], ...RANGES.imageX)),
+    imageY: pick('imageY', between(s['imageY'], ...RANGES.imageY)),
     vizSize: pick('vizSize', between(s['vizSize'], ...RANGES.vizSize)),
     vizX: pick('vizX', between(s['vizX'], ...RANGES.vizX)),
     vizY: pick('vizY', between(s['vizY'], ...RANGES.vizY)),

@@ -69,7 +69,7 @@ export class Soundwave {
     return {
       layout: s.layout, shape: s.shape, colorMode: s.colorMode, bar: s.bar, bar2: s.bar2, bg: s.bg,
       glow: s.glow, caps: s.caps, title: this.title().trim(), image: this.image(),
-      imageSize: s.imageSize, vizSize: s.vizSize, vizX: s.vizX, vizY: s.vizY,
+      imageSize: s.imageSize, imageX: s.imageX, imageY: s.imageY, vizSize: s.vizSize, vizX: s.vizX, vizY: s.vizY,
     };
   });
 

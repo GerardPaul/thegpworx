@@ -4,7 +4,7 @@ import { animate } from './spectrum';
 const BARS = 32;
 const base: Look = {
   layout: 'mirror', shape: 'pixel', colorMode: 'solid', bar: '#ff0000', bar2: '#0000ff', bg: '#00ff00',
-  glow: false, caps: false, title: '', imageSize: 1, vizSize: 1, vizX: 0, vizY: 0,
+  glow: false, caps: false, title: '', imageSize: 1, imageX: 0, imageY: 0, vizSize: 1, vizX: 0, vizY: 0,
 };
 
 function canvas(width: number, height: number) {
@@ -103,6 +103,17 @@ describe('drawFrame', () => {
     drawFrame(ctx, undefined, 0, { ...base, image: img.canvas as unknown as ImageBitmap, imageSize: 0.5 });
     expect(Array.from(ctx.getImageData(0, 0, 1, 1).data)).toEqual([0, 255, 0, 255]);
     expect(Array.from(ctx.getImageData(160, 20, 1, 1).data)).toEqual([0, 0, 255, 255]);
+  });
+
+  it('moves the background image with its position', () => {
+    const img = canvas(4, 4);
+    img.fillStyle = '#0000ff';
+    img.fillRect(0, 0, 4, 4);
+    const ctx = canvas(320, 180);
+    // Half-size image (160x160 at x 80..240) shifted right by a quarter of the width -> x 160..320.
+    drawFrame(ctx, undefined, 0, { ...base, image: img.canvas as unknown as ImageBitmap, imageSize: 0.5, imageX: 0.25 });
+    expect(Array.from(ctx.getImageData(100, 20, 1, 1).data)).toEqual([0, 255, 0, 255]);
+    expect(Array.from(ctx.getImageData(300, 20, 1, 1).data)).toEqual([0, 0, 255, 255]);
   });
 
   it('covers the frame with a background image', () => {

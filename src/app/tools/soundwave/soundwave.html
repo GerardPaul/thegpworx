@@ -75,6 +75,19 @@
             <input type="range" [min]="ranges.imageSize[0]" [max]="ranges.imageSize[1]" step="0.05" [value]="settings().imageSize"
                    (input)="choose('imageSize', numberFrom($event))" class="mt-1 block w-full accent-accent">
           </label>
+          <label class="mt-2 block text-sm">
+            Left / right
+            <input type="range" [min]="ranges.imageX[0]" [max]="ranges.imageX[1]" step="0.01" [value]="settings().imageX"
+                   (input)="choose('imageX', numberFrom($event))" class="mt-1 block w-full accent-accent">
+          </label>
+          <label class="mt-2 block text-sm">
+            Up / down
+            <input type="range" [min]="ranges.imageY[0]" [max]="ranges.imageY[1]" step="0.01" [value]="settings().imageY"
+                   (input)="choose('imageY', numberFrom($event))" class="mt-1 block w-full accent-accent">
+          </label>
+          <button type="button" class="btn btn-secondary btn-sm mt-3 disabled:opacity-50" (click)="update({ imageSize: 1, imageX: 0, imageY: 0 })">
+            Fill frame
+          </button>
         }
       </div>
       @if (audioUrl()) {

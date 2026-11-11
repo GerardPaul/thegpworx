@@ -16,6 +16,8 @@ export interface Look {
   title: string;
   image?: ImageBitmap;
   imageSize: number; // 1 = covers the frame
+  imageX: number; // offset as a fraction of frame width, 0 = centred
+  imageY: number; // offset as a fraction of frame height, 0 = centred
   vizSize: number; // 1 = default bar size
   vizX: number; // offset as a fraction of frame width, 0 = centred
   vizY: number; // offset as a fraction of frame height, 0 = centred
@@ -45,8 +47,10 @@ export function drawFrame(ctx: CanvasRenderingContext2D, anim: Animated | undefi
   ctx.fillRect(0, 0, width, height);
   if (look.image) {
     const { width: iw, height: ih } = look.image;
-    const scale = Math.max(width / iw, height / ih) * look.imageSize; // 1 = cover, centred
-    ctx.drawImage(look.image, (width - iw * scale) / 2, (height - ih * scale) / 2, iw * scale, ih * scale);
+    const scale = Math.max(width / iw, height / ih) * look.imageSize; // 1 = cover
+    const x = (width - iw * scale) / 2 + look.imageX * width;
+    const y = (height - ih * scale) / 2 + look.imageY * height;
+    ctx.drawImage(look.image, x, y, iw * scale, ih * scale);
   }
 
   if (!look.glow) return drawForeground(ctx, anim, frame, look, width, height);
