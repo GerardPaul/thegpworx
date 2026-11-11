@@ -9,6 +9,7 @@ export interface Project {
   cover?: string;         // main screenshot; omit until provided -> placeholder
   screenshots?: string[]; // gallery on the detail page
   links?: { live?: string; repo?: string };
+  tool?: string;          // route of a tool that runs on this site -> "Try it" button
   year?: number;
 }
 
@@ -36,6 +37,24 @@ export const projects: Project[] = [
   //   platform: 'web',
   //   cover: img('slmp'),
   // },
+  {
+    slug: 'soundwave',
+    title: 'Soundwave',
+    tagline: 'Turn any sound recording into a waveform video, right in your browser.',
+    description: [
+      'Soundwave turns a sound recording into an MP4 video of an animated waveform, synced to the audio and ready to share.',
+      'Everything runs in the browser: the audio is decoded with the Web Audio API, each frame is drawn on a canvas, and the video is encoded with WebCodecs. Nothing is uploaded, so recordings stay private and there is no server to pay for.',
+    ],
+    highlights: [
+      'Exports MP4 (H.264 video + AAC audio)',
+      'Renders faster than real time',
+      'Audio never leaves your device',
+    ],
+    tech: ['Angular', 'Tailwind CSS', 'WebCodecs'],
+    platform: 'web',
+    tool: '/tools/soundwave',
+    year: 2026,
+  },
   {
     slug: 'mopac',
     title: 'MSU Mobile Library Catalog',

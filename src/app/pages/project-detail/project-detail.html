@@ -10,13 +10,16 @@
           <app-tech-logos [techs]="p.tech" />
           @if (p.year) { <span class="text-sm text-muted">{{ p.year }}</span> }
         </div>
-        @if (p.links; as links) {
+        @if (p.tool || p.links) {
           <div class="mt-6 flex flex-wrap gap-3">
-            @if (links.live) {
-              <a [href]="links.live" target="_blank" rel="noopener" class="btn btn-primary">Visit site ↗</a>
+            @if (p.tool) {
+              <a [routerLink]="p.tool" class="btn btn-primary">Try it</a>
             }
-            @if (links.repo) {
-              <a [href]="links.repo" target="_blank" rel="noopener" class="btn btn-secondary">Source code ↗</a>
+            @if (p.links?.live; as live) {
+              <a [href]="live" target="_blank" rel="noopener" class="btn btn-primary">Visit site ↗</a>
+            }
+            @if (p.links?.repo; as repo) {
+              <a [href]="repo" target="_blank" rel="noopener" class="btn btn-secondary">Source code ↗</a>
             }
           </div>
         }

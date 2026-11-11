@@ -1,0 +1,62 @@
+<div class="mx-auto max-w-5xl px-4 py-12 sm:px-6 sm:py-16">
+  <a routerLink="/projects/soundwave" class="btn btn-secondary btn-sm">← About this tool</a>
+
+  <h1 class="cursor mt-6 text-4xl font-semibold sm:text-6xl">Soundwave<span class="text-error">.</span></h1>
+  <p class="mt-4 max-w-3xl text-xl text-fg/80">
+    Turn a sound recording into a waveform video. Everything runs in your browser, so your audio never leaves your device.
+  </p>
+
+  <div class="mt-10 flex flex-wrap items-center gap-4">
+    <label class="btn btn-primary cursor-pointer focus-within:outline-dashed focus-within:outline-[3px] focus-within:outline-offset-4 focus-within:outline-accent"
+           [class.pointer-events-none]="exporting() || loading()" [class.opacity-50]="exporting() || loading()">
+      Choose audio
+      <input type="file" accept="audio/*" class="sr-only" (change)="load($event)" [disabled]="exporting() || loading()">
+    </label>
+    @if (loading()) {
+      <span class="text-muted">Reading {{ fileName() }}…</span>
+    } @else if (fileName()) {
+      <span class="break-all text-muted">{{ fileName() }}</span>
+    }
+  </div>
+
+  <div class="pixel-border relative mt-8 bg-surface">
+    <canvas #canvas [width]="width" [height]="height" class="block aspect-video w-full"
+            role="img" [attr.aria-label]="fileName() ? 'Waveform of ' + fileName() : 'Empty waveform preview'"></canvas>
+    @if (!fileName()) {
+      <p class="absolute inset-0 flex items-center justify-center p-6 text-center font-display text-muted">
+        Choose an audio file to see its waveform
+      </p>
+    }
+  </div>
+
+  <audio #audio controls [src]="audioUrl() ?? ''" class="mt-6 w-full" [class.hidden]="!audioUrl()"></audio>
+
+  <div class="mt-8 flex flex-wrap items-center gap-6">
+    <button type="button" class="btn btn-primary disabled:pointer-events-none disabled:opacity-50"
+            (click)="export()" [disabled]="!audioUrl() || exporting()">
+      Export MP4
+    </button>
+
+    @if (progress(); as p) {
+      <div class="flex items-center gap-3">
+        <div class="pixel-border h-4 w-48 bg-surface [--px-b:2px]" role="progressbar" aria-label="Export progress"
+             aria-valuemin="0" aria-valuemax="100" [attr.aria-valuenow]="(p * 100).toFixed(0)">
+          <div class="h-full bg-accent" [style.width.%]="p * 100"></div>
+        </div>
+        <span class="font-display text-sm text-muted">{{ (p * 100).toFixed(0) }}%</span>
+      </div>
+    } @else if (exporting()) {
+      <span class="font-display text-sm text-muted">Starting…</span>
+    }
+
+    @if (download(); as d) {
+      <a [href]="d.url" [download]="d.name" class="btn btn-secondary">Download video</a>
+    }
+  </div>
+
+  @if (error()) {
+    <p role="alert" class="pixel-border mt-6 flex gap-3 bg-surface px-4 py-3 text-fg">
+      <span class="text-error" aria-hidden="true">!</span>{{ error() }}
+    </p>
+  }
+</div>

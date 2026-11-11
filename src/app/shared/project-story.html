@@ -58,7 +58,10 @@
                 <h3 class="text-2xl font-semibold sm:text-4xl">{{ p.title }}</h3>
                 <p class="mt-3 text-muted sm:mt-4 sm:text-lg">{{ p.tagline }}</p>
                 <app-tech-logos class="mt-5" [techs]="p.tech" />
-                <a [routerLink]="['/projects', p.slug]" class="btn btn-secondary mt-6 sm:mt-8">View project</a>
+                <div class="mt-6 flex flex-wrap gap-3 sm:mt-8">
+                  @if (p.tool) { <a [routerLink]="p.tool" class="btn btn-primary">Try it</a> }
+                  <a [routerLink]="['/projects', p.slug]" class="btn btn-secondary">View project</a>
+                </div>
               </div>
             }
           </div>
