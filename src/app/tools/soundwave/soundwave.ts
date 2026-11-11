@@ -3,12 +3,16 @@ import { RouterLink } from '@angular/router';
 import {
   AudioBufferSource, BufferTarget, CanvasSource, Mp4OutputFormat, Output, QUALITY_HIGH, canEncodeAudio, canEncodeVideo,
 } from 'mediabunny';
-import { FPS, Palette, drawFrame, spectrum } from './spectrum';
+import { FPS, Layout, Look, Shape, drawFrame, spectrum } from './spectrum';
 
 const WIDTH = 1280;
 const HEIGHT = 720;
 const SAMPLE_RATE = 48000; // AAC-friendly; decoding resamples everything to this
 const MAX_MINUTES = 10; // decoded audio is held in memory (~23 MB per minute)
+// Video colours are the user's content, not site theme, so they're plain hex (what <input type="color"> needs).
+const DEFAULT_BAR = '#38bdf8';
+const DEFAULT_BG = '#0a0d14';
+const GREEN_SCREEN = '#00ff00';
 
 @Component({
   selector: 'app-soundwave',
@@ -28,6 +32,23 @@ export class Soundwave {
   progress = signal<number | null>(null); // 0..1 while exporting
   download = signal<{ url: string; name: string } | undefined>(undefined);
   exporting = computed(() => this.progress() !== null);
+
+  layouts: { value: Layout; label: string }[] = [
+    { value: 'mirror', label: 'Mirrored' },
+    { value: 'bottom', label: 'Bottom' },
+    { value: 'circle', label: 'Circle' },
+  ];
+  shapes: { value: Shape; label: string }[] = [
+    { value: 'pixel', label: 'Pixel' },
+    { value: 'solid', label: 'Solid' },
+    { value: 'rounded', label: 'Rounded' },
+  ];
+  greenScreen = GREEN_SCREEN;
+  layout = signal<Layout>('mirror');
+  shape = signal<Shape>('pixel');
+  barColor = signal(DEFAULT_BAR);
+  bgColor = signal(DEFAULT_BG);
+  look = computed<Look>(() => ({ layout: this.layout(), shape: this.shape(), bar: this.barColor(), bg: this.bgColor() }));
 
   private buffer?: AudioBuffer;
   private levels?: Float32Array;
@@ -87,7 +108,7 @@ export class Soundwave {
     canvas.width = WIDTH;
     canvas.height = HEIGHT;
     const ctx = canvas.getContext('2d')!;
-    const colors = this.palette();
+    const look = this.look();
     const output = new Output({ format: new Mp4OutputFormat({ fastStart: 'in-memory' }), target: new BufferTarget() });
     try {
       const supported = await canEncodeVideo('avc', { width: WIDTH, height: HEIGHT })
@@ -104,7 +125,7 @@ export class Soundwave {
       const frames = Math.ceil(buffer.duration * FPS);
       for (let f = 0; f < frames; f++) {
         if (this.destroyed) throw new Error('Export cancelled.');
-        drawFrame(ctx, levels, f, colors);
+        drawFrame(ctx, levels, f, look);
         await video.add(f / FPS, 1 / FPS);
         if (f % FPS === 0) {
           this.progress.set(f / frames);
@@ -127,14 +148,12 @@ export class Soundwave {
   private drawPreview() {
     const ctx = this.canvas().nativeElement.getContext('2d')!;
     const frame = Math.floor(this.audio().nativeElement.currentTime * FPS);
-    drawFrame(ctx, this.levels ?? new Float32Array(0), frame, this.palette());
+    drawFrame(ctx, this.levels ?? new Float32Array(0), frame, this.look());
   }
 
-  /** Current theme colours, so the video matches what the user sees. */
-  private palette(): Palette {
-    const css = getComputedStyle(document.documentElement);
-    const token = (name: string) => css.getPropertyValue(name).trim();
-    return { bg: `rgb(${token('--surface')})`, bar: `rgb(${token('--accent')})` };
+  resetColors() {
+    this.barColor.set(DEFAULT_BAR);
+    this.bgColor.set(DEFAULT_BG);
   }
 
   private revokeDownload() {

@@ -6,9 +6,14 @@ const MAX_HZ = 16000;
 const RANGE_DB = 50; // levels this far below the recording's loudest point show as zero
 const FALL = 0.06; // max drop per frame: bars jump up instantly but fall smoothly
 
-export interface Palette {
-  bg: string;
+export type Layout = 'mirror' | 'bottom' | 'circle';
+export type Shape = 'pixel' | 'solid' | 'rounded';
+
+export interface Look {
+  layout: Layout;
+  shape: Shape;
   bar: string;
+  bg: string;
 }
 
 /** In-place iterative radix-2 FFT; length must be a power of two. */
@@ -95,21 +100,54 @@ export function spectrum(channels: Float32Array[], sampleRate: number, fps = FPS
   return out;
 }
 
-/** Spectrum bars mirrored above and below a centre line; heights snap to pixel blocks (site's pixel theme). */
-export function drawFrame(ctx: CanvasRenderingContext2D, levels: Float32Array, frame: number, colors: Palette, bars = BARS) {
+/** Draws one video frame of spectrum bars in the chosen layout, shape and colours. */
+export function drawFrame(ctx: CanvasRenderingContext2D, levels: Float32Array, frame: number, look: Look, bars = BARS) {
   const { width, height } = ctx.canvas;
-  ctx.fillStyle = colors.bg;
+  ctx.fillStyle = look.bg;
   ctx.fillRect(0, 0, width, height);
+  ctx.fillStyle = look.bar;
+
+  // 'pixel' snaps lengths to blocks (matches the site's pixel theme); the others are smooth.
+  const block = Math.max(2, Math.round(height / 90));
+  const size = (level: number, max: number) =>
+    look.shape === 'pixel' ? Math.max(1, Math.round((level * max) / block)) * block : Math.max(block, level * max);
+  const rect = (x: number, y: number, w: number, h: number) => {
+    ctx.beginPath();
+    if (look.shape === 'rounded') ctx.roundRect(x, y, w, h, w / 2);
+    else ctx.rect(Math.round(x), Math.round(y), Math.round(w), Math.round(h));
+    ctx.fill();
+  };
+  const level = (b: number) => levels[frame * bars + b] ?? 0;
+
+  if (look.layout === 'circle') {
+    // Bass at the top, treble towards the bottom, mirrored left/right.
+    const radius = Math.min(width, height) * 0.2;
+    const barWidth = Math.max(2, ((Math.PI * radius) / bars) * 0.6);
+    for (let b = 0; b < bars; b++) {
+      const len = size(level(b), Math.min(width, height) * 0.25);
+      const angle = ((b + 0.5) / bars) * Math.PI;
+      for (const a of [angle, -angle]) {
+        ctx.save();
+        ctx.translate(width / 2, height / 2);
+        ctx.rotate(a);
+        rect(-barWidth / 2, -radius - len, barWidth, len);
+        ctx.restore();
+      }
+    }
+    return;
+  }
 
   const pad = width * 0.05;
   const slot = (width - 2 * pad) / bars;
   const barWidth = Math.max(1, Math.floor(slot * 0.6));
-  const block = Math.max(2, Math.round(height / 90));
-  const mid = height / 2;
-  ctx.fillStyle = colors.bar;
   for (let b = 0; b < bars; b++) {
-    const level = levels[frame * bars + b] ?? 0;
-    const half = Math.max(1, Math.round((level * height * 0.4) / block)) * block;
-    ctx.fillRect(Math.round(pad + b * slot + (slot - barWidth) / 2), Math.round(mid - half), barWidth, half * 2);
+    const x = pad + b * slot + (slot - barWidth) / 2;
+    if (look.layout === 'bottom') {
+      const h = size(level(b), height * 0.7);
+      rect(x, height * 0.85 - h, barWidth, h);
+    } else {
+      const half = size(level(b), height * 0.4);
+      rect(x, height / 2 - half, barWidth, half * 2);
+    }
   }
 }

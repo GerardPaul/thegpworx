@@ -31,6 +31,59 @@
 
   <audio #audio controls [src]="audioUrl() ?? ''" class="mt-6 w-full" [class.hidden]="!audioUrl()"></audio>
 
+  <div class="mt-8 grid gap-8 md:grid-cols-3">
+    <fieldset [disabled]="exporting()">
+      <legend class="font-display text-sm uppercase tracking-widest text-muted">Layout</legend>
+      <div class="mt-3 flex flex-wrap gap-3">
+        @for (o of layouts; track o.value) {
+          <button type="button" (click)="layout.set(o.value)" [attr.aria-pressed]="layout() === o.value"
+                  class="btn btn-sm disabled:opacity-50" [class.btn-primary]="layout() === o.value" [class.btn-secondary]="layout() !== o.value">
+            {{ o.label }}
+          </button>
+        }
+      </div>
+    </fieldset>
+
+    <fieldset [disabled]="exporting()">
+      <legend class="font-display text-sm uppercase tracking-widest text-muted">Bar shape</legend>
+      <div class="mt-3 flex flex-wrap gap-3">
+        @for (o of shapes; track o.value) {
+          <button type="button" (click)="shape.set(o.value)" [attr.aria-pressed]="shape() === o.value"
+                  class="btn btn-sm disabled:opacity-50" [class.btn-primary]="shape() === o.value" [class.btn-secondary]="shape() !== o.value">
+            {{ o.label }}
+          </button>
+        }
+      </div>
+    </fieldset>
+
+    <fieldset [disabled]="exporting()">
+      <legend class="font-display text-sm uppercase tracking-widest text-muted">Colors</legend>
+      <div class="mt-3 flex flex-wrap items-center gap-4">
+        <label class="flex items-center gap-2 font-display text-sm">
+          <input type="color" [value]="barColor()" (input)="barColor.set($any($event.target).value)"
+                 class="pixel-border h-8 w-10 cursor-pointer bg-surface p-0.5 [--px-b:2px]">
+          Bars
+        </label>
+        <label class="flex items-center gap-2 font-display text-sm">
+          <input type="color" [value]="bgColor()" (input)="bgColor.set($any($event.target).value)"
+                 class="pixel-border h-8 w-10 cursor-pointer bg-surface p-0.5 [--px-b:2px]">
+          Background
+        </label>
+      </div>
+      <div class="mt-3 flex flex-wrap gap-3">
+        <button type="button" class="btn btn-sm disabled:opacity-50" (click)="bgColor.set(greenScreen)"
+                [attr.aria-pressed]="bgColor() === greenScreen"
+                [class.btn-primary]="bgColor() === greenScreen" [class.btn-secondary]="bgColor() !== greenScreen">
+          Green screen
+        </button>
+        <button type="button" class="btn btn-secondary btn-sm disabled:opacity-50" (click)="resetColors()">Reset</button>
+      </div>
+      @if (bgColor() === greenScreen) {
+        <p class="mt-3 text-sm text-muted">Key out pure green (#00FF00) in your video editor to keep only the bars.</p>
+      }
+    </fieldset>
+  </div>
+
   <div class="mt-8 flex flex-wrap items-center gap-6">
     <button type="button" class="btn btn-primary disabled:pointer-events-none disabled:opacity-50"
             (click)="export()" [disabled]="!audioUrl() || exporting()">

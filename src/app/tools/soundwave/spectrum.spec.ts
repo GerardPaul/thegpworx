@@ -1,4 +1,4 @@
-import { BARS, FPS, fft, spectrum } from './spectrum';
+import { BARS, FPS, Layout, Shape, drawFrame, fft, spectrum } from './spectrum';
 
 const RATE = 48000;
 const tone = (hz: number, seconds: number) =>
@@ -46,5 +46,28 @@ describe('spectrum', () => {
   it('returns zeros for silence and nothing for empty audio', () => {
     expect(spectrum([new Float32Array(RATE / 10)], RATE).every(v => v === 0)).toBeTrue();
     expect(spectrum([new Float32Array(0)], RATE).length).toBe(0);
+  });
+});
+
+describe('drawFrame', () => {
+  const layouts: Layout[] = ['mirror', 'bottom', 'circle'];
+  const shapes: Shape[] = ['pixel', 'solid', 'rounded'];
+
+  it('fills the background with the exact colour (green screen) and draws bars in the bar colour', () => {
+    const canvas = document.createElement('canvas');
+    canvas.width = 320;
+    canvas.height = 180;
+    const ctx = canvas.getContext('2d', { willReadFrequently: true })!;
+    const levels = new Float32Array(BARS).fill(1);
+    for (const layout of layouts) {
+      for (const shape of shapes) {
+        drawFrame(ctx, levels, 0, { layout, shape, bar: '#ff0000', bg: '#00ff00' });
+        const px = Array.from(ctx.getImageData(0, 0, 320, 180).data);
+        const count = (r: number, g: number) => px.filter((_, i) => i % 4 === 0 && px[i] === r && px[i + 1] === g).length;
+        const label = `${layout}/${shape}`;
+        expect(Array.from(ctx.getImageData(0, 0, 1, 1).data)).withContext(label).toEqual([0, 255, 0, 255]);
+        expect(count(255, 0)).withContext(label).toBeGreaterThan(1000);
+      }
+    }
   });
 });
