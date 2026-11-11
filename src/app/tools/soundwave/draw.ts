@@ -36,6 +36,8 @@ export function barColor(look: Look, b: number, n: number): string {
   return `rgb(${a.map((v, i) => Math.round(v + (c[i] - v) * t)).join(' ')})`;
 }
 
+const CIRCLE_TILT = (25 * Math.PI) / 180;
+
 let glowLayer: OffscreenCanvasRenderingContext2D | undefined;
 
 /** Draws one video frame (background, title, bars, caps) on ctx's canvas, whatever its size. */
@@ -106,7 +108,6 @@ function drawForeground(
   const top = look.title ? min * 0.18 : min * 0.06;
 
   if (look.layout === 'circle') {
-    // Bass at the top, treble towards the bottom, mirrored left/right.
     const cy = (height + top) / 2;
     const room = Math.min(width / 2, height - cy, cy - top);
     const radius = room * 0.45;
@@ -116,7 +117,10 @@ function drawForeground(
       paint(barColor(look, b, bars));
       const len = size(level(b), maxLen);
       const capAt = size(cap(b), maxLen) + block;
-      for (const angle of [1, -1].map(s => (s * (b + 0.5) * Math.PI) / bars)) {
+      // Right half runs bass (top) to treble (bottom); the left half is the same sweep turned 180°,
+      // so its bass sits at the bottom. The whole ring is tilted 25° because it looked better.
+      const a = ((b + 0.5) * Math.PI) / bars + CIRCLE_TILT;
+      for (const angle of [a, a + Math.PI]) {
         ctx.save();
         ctx.translate(width / 2, cy);
         ctx.rotate(angle);
