@@ -1,7 +1,7 @@
 import { Component, computed, effect, inject, input } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
 import { RouterLink } from '@angular/router';
-import { projects } from '../../data/projects';
+import { projectLabel, projects } from '../../data/projects';
 import { ProjectImage } from '../../shared/project-image';
 import { TechLogos } from '../../shared/tech-logos';
 
@@ -17,6 +17,7 @@ export class ProjectDetail {
   project = computed(() => projects[this.index()]);
   prev = computed(() => projects[this.index() - 1]);
   next = computed(() => projects[this.index() + 1]);
+  label = projectLabel;
 
   constructor() {
     const title = inject(Title);

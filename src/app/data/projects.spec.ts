@@ -1,5 +1,5 @@
 import { profile } from './profile';
-import { projects } from './projects';
+import { Project, projectLabel, projects } from './projects';
 import { techLogos } from './tech';
 
 describe('projects data', () => {
@@ -7,6 +7,15 @@ describe('projects data', () => {
     const slugs = projects.map(p => p.slug);
     expect(new Set(slugs).size).toBe(slugs.length);
     slugs.forEach(s => expect(s).toMatch(/^[a-z0-9-]+$/));
+  });
+
+  it('labels each kind of project', () => {
+    const base: Project = { slug: 'x', title: 'X', tagline: '', description: [], tech: [], platform: 'web' };
+    const live = { links: { live: 'https://example.com' } };
+    expect(projectLabel(base)).toBeUndefined();
+    expect(projectLabel({ ...base, ...live })).toBe('Live site');
+    expect(projectLabel({ ...base, ...live, concept: true })).toBe('Concept');
+    expect(projectLabel({ ...base, tool: '/tools/x' })).toBe('Interactive');
   });
 });
 

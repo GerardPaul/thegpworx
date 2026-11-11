@@ -10,8 +10,13 @@ export interface Project {
   screenshots?: string[]; // gallery on the detail page
   links?: { live?: string; repo?: string };
   tool?: string;          // route of a tool that runs on this site -> "Try it" button
+  concept?: boolean;      // mock or pitch, not real client work -> "Concept" label
   year?: number;
 }
+
+/** Card label; no label = archive (screenshots only). */
+export const projectLabel = (p: Project): string | undefined =>
+  p.tool ? 'Interactive' : p.concept ? 'Concept' : p.links?.live ? 'Live site' : undefined;
 
 const img = (slug: string, file = 'cover.png') => `assets/images/projects/${slug}/${file}`;
 

@@ -55,6 +55,7 @@
             @for (p of list(); track p.slug; let i = $index) {
               <div class="transition duration-500 [grid-area:1/1]" [inert]="i !== active()"
                    [class.opacity-0]="i !== active()" [class.translate-y-4]="i !== active()">
+                @if (label(p); as l) { <p class="mb-2 font-display text-sm uppercase tracking-widest text-accent">{{ l }}</p> }
                 <h3 class="text-2xl font-semibold sm:text-4xl">{{ p.title }}</h3>
                 <p class="mt-3 text-muted sm:mt-4 sm:text-lg">{{ p.tagline }}</p>
                 <app-tech-logos class="mt-5" [techs]="p.tech" />

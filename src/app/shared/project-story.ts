@@ -1,7 +1,7 @@
 import { Component, DestroyRef, booleanAttribute, ElementRef, afterNextRender, computed, inject, input, signal, viewChild } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { Project, projects } from '../data/projects';
+import { Project, projectLabel, projects } from '../data/projects';
 import { TechLogos } from './tech-logos';
 
 type Platform = Project['platform'];
@@ -29,6 +29,7 @@ export class ProjectStory {
   platform = signal<Platform>('web');
   list = computed(() => projects.filter(p => p.platform === this.platform()));
   active = signal(0);
+  label = projectLabel;
 
   private section = viewChild.required<ElementRef<HTMLElement>>('section');
 
