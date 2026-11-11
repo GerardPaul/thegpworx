@@ -42,6 +42,25 @@
     </div>
   </ng-template>
 
+  <!-- A numeric setting: label + value, then − / slider / + (the buttons move one step for fine control). -->
+  <ng-template #slider let-key="key" let-label="label">
+    <div class="mt-3 text-sm">
+      <div class="flex justify-between gap-2">
+        <span [id]="key + '-label'">{{ label }}</span>
+        <span class="text-muted">{{ ($any(settings())[key] * 100).toFixed(0) }}%</span>
+      </div>
+      <div class="mt-1 flex items-center gap-3">
+        <button type="button" class="btn btn-secondary btn-sm disabled:opacity-50" [attr.aria-label]="'Decrease ' + label"
+                (click)="setNumber(key, $any(settings())[key], -1)">−</button>
+        <input type="range" [attr.aria-labelledby]="key + '-label'" [min]="$any(ranges)[key][0]" [max]="$any(ranges)[key][1]"
+               [step]="$any(ranges)[key][2]" [value]="$any(settings())[key]" (input)="setNumber(key, numberFrom($event))"
+               class="block w-full min-w-0 accent-accent">
+        <button type="button" class="btn btn-secondary btn-sm disabled:opacity-50" [attr.aria-label]="'Increase ' + label"
+                (click)="setNumber(key, $any(settings())[key], 1)">+</button>
+      </div>
+    </div>
+  </ng-template>
+
   <fieldset [disabled]="busy()" class="mt-10 grid gap-10 md:grid-cols-3">
     <legend class="sr-only">Video settings</legend>
 
@@ -52,11 +71,23 @@
         <span class="font-display text-sm uppercase tracking-widest text-muted">Format</span>
         <ng-container [ngTemplateOutlet]="toggles" [ngTemplateOutletContext]="{ key: 'format', list: options.format }" />
       </div>
-      <label class="block">
-        <span class="font-display text-sm uppercase tracking-widest text-muted">Title</span>
+      <div>
+        <label class="block">
+          <span class="font-display text-sm uppercase tracking-widest text-muted">Title</span>
         <input type="text" maxlength="80" placeholder="Song name or caption" [value]="title()" (input)="title.set($any($event.target).value)"
                class="pixel-border mt-2 block w-full bg-surface px-3 py-2 text-fg placeholder:text-muted [--px-b:2px]">
       </label>
+        @if (title().trim()) {
+          <span class="mt-3 block text-sm">Font</span>
+          <ng-container [ngTemplateOutlet]="toggles" [ngTemplateOutletContext]="{ key: 'titleFont', list: options.titleFont }" />
+          <ng-container [ngTemplateOutlet]="slider" [ngTemplateOutletContext]="{ key: 'titleSize', label: 'Title size' }" />
+          <ng-container [ngTemplateOutlet]="slider" [ngTemplateOutletContext]="{ key: 'titleX', label: 'Left / right' }" />
+          <ng-container [ngTemplateOutlet]="slider" [ngTemplateOutletContext]="{ key: 'titleY', label: 'Up / down' }" />
+          <button type="button" class="btn btn-secondary btn-sm mt-3 disabled:opacity-50" (click)="update({ titleSize: 1, titleX: 0, titleY: 0 })">
+            Reset title
+          </button>
+        }
+      </div>
       <div>
         <span class="font-display text-sm uppercase tracking-widest text-muted">Background image</span>
         <div class="mt-2 flex flex-wrap items-center gap-3">
@@ -70,21 +101,9 @@
           }
         </div>
         @if (imageName()) {
-          <label class="mt-3 block text-sm">
-            Image size: {{ (settings().imageSize * 100).toFixed(0) }}%
-            <input type="range" [min]="ranges.imageSize[0]" [max]="ranges.imageSize[1]" step="0.05" [value]="settings().imageSize"
-                   (input)="choose('imageSize', numberFrom($event))" class="mt-1 block w-full accent-accent">
-          </label>
-          <label class="mt-2 block text-sm">
-            Left / right
-            <input type="range" [min]="ranges.imageX[0]" [max]="ranges.imageX[1]" step="0.01" [value]="settings().imageX"
-                   (input)="choose('imageX', numberFrom($event))" class="mt-1 block w-full accent-accent">
-          </label>
-          <label class="mt-2 block text-sm">
-            Up / down
-            <input type="range" [min]="ranges.imageY[0]" [max]="ranges.imageY[1]" step="0.01" [value]="settings().imageY"
-                   (input)="choose('imageY', numberFrom($event))" class="mt-1 block w-full accent-accent">
-          </label>
+          <ng-container [ngTemplateOutlet]="slider" [ngTemplateOutletContext]="{ key: 'imageSize', label: 'Image size' }" />
+          <ng-container [ngTemplateOutlet]="slider" [ngTemplateOutletContext]="{ key: 'imageX', label: 'Left / right' }" />
+          <ng-container [ngTemplateOutlet]="slider" [ngTemplateOutletContext]="{ key: 'imageY', label: 'Up / down' }" />
           <button type="button" class="btn btn-secondary btn-sm mt-3 disabled:opacity-50" (click)="update({ imageSize: 1, imageX: 0, imageY: 0 })">
             Fill frame
           </button>
@@ -127,21 +146,9 @@
       </div>
       <div>
         <span class="font-display text-sm uppercase tracking-widest text-muted">Size &amp; position</span>
-        <label class="mt-2 block text-sm">
-          Size: {{ (settings().vizSize * 100).toFixed(0) }}%
-          <input type="range" [min]="ranges.vizSize[0]" [max]="ranges.vizSize[1]" step="0.05" [value]="settings().vizSize"
-                 (input)="choose('vizSize', numberFrom($event))" class="mt-1 block w-full accent-accent">
-        </label>
-        <label class="mt-2 block text-sm">
-          Left / right
-          <input type="range" [min]="ranges.vizX[0]" [max]="ranges.vizX[1]" step="0.01" [value]="settings().vizX"
-                 (input)="choose('vizX', numberFrom($event))" class="mt-1 block w-full accent-accent">
-        </label>
-        <label class="mt-2 block text-sm">
-          Up / down
-          <input type="range" [min]="ranges.vizY[0]" [max]="ranges.vizY[1]" step="0.01" [value]="settings().vizY"
-                 (input)="choose('vizY', numberFrom($event))" class="mt-1 block w-full accent-accent">
-        </label>
+        <ng-container [ngTemplateOutlet]="slider" [ngTemplateOutletContext]="{ key: 'vizSize', label: 'Size' }" />
+        <ng-container [ngTemplateOutlet]="slider" [ngTemplateOutletContext]="{ key: 'vizX', label: 'Left / right' }" />
+        <ng-container [ngTemplateOutlet]="slider" [ngTemplateOutletContext]="{ key: 'vizY', label: 'Up / down' }" />
         <button type="button" class="btn btn-secondary btn-sm mt-3 disabled:opacity-50" (click)="update({ vizSize: 1, vizX: 0, vizY: 0 })">
           Center
         </button>
@@ -153,16 +160,11 @@
           @for (n of options.bars; track n) { <option [value]="n" [selected]="settings().bars === n">{{ n }}</option> }
         </select>
       </label>
-      <label class="block">
-        <span class="font-display text-sm uppercase tracking-widest text-muted">Sensitivity</span>
-        <input type="range" min="0.5" max="2" step="0.05" [value]="settings().sensitivity"
-               (input)="choose('sensitivity', numberFrom($event))" class="mt-2 block w-full accent-accent">
-      </label>
-      <label class="block">
-        <span class="font-display text-sm uppercase tracking-widest text-muted">Smoothness</span>
-        <input type="range" min="0" max="1" step="0.05" [value]="settings().smoothness"
-               (input)="choose('smoothness', numberFrom($event))" class="mt-2 block w-full accent-accent">
-      </label>
+      <div>
+        <span class="font-display text-sm uppercase tracking-widest text-muted">Movement</span>
+        <ng-container [ngTemplateOutlet]="slider" [ngTemplateOutletContext]="{ key: 'sensitivity', label: 'Sensitivity' }" />
+        <ng-container [ngTemplateOutlet]="slider" [ngTemplateOutletContext]="{ key: 'smoothness', label: 'Smoothness' }" />
+      </div>
       <div>
         <span class="font-display text-sm uppercase tracking-widest text-muted">Effects</span>
         <div class="mt-2 flex flex-wrap gap-3">

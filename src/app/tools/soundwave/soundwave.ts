@@ -4,8 +4,8 @@ import { RouterLink } from '@angular/router';
 import {
   AudioBufferSource, BufferTarget, CanvasSource, Mp4OutputFormat, Output, QUALITY_HIGH, canEncodeAudio, canEncodeVideo,
 } from 'mediabunny';
-import { Look, TITLE_FONT, drawFrame } from './draw';
-import { DEFAULTS, FORMATS, GREEN_SCREEN, OPTIONS, RANGES, Settings, fallFor, sanitize } from './settings';
+import { Look, drawFrame, titleFont } from './draw';
+import { DEFAULTS, FORMATS, GREEN_SCREEN, Numeric, OPTIONS, RANGES, Settings, fallFor, sanitize, snap } from './settings';
 import { FPS, animate, spectrum } from './spectrum';
 
 const SAMPLE_RATE = 48000; // AAC-friendly; decoding resamples everything to this
@@ -64,14 +64,7 @@ export class Soundwave {
     const s = this.settings();
     return raw && animate(raw.data, raw.bars, s.sensitivity, fallFor(s.smoothness));
   });
-  look = computed<Look>(() => {
-    const s = this.settings();
-    return {
-      layout: s.layout, shape: s.shape, colorMode: s.colorMode, bar: s.bar, bar2: s.bar2, bg: s.bg,
-      glow: s.glow, caps: s.caps, title: this.title().trim(), image: this.image(),
-      imageSize: s.imageSize, imageX: s.imageX, imageY: s.imageY, vizSize: s.vizSize, vizX: s.vizX, vizY: s.vizY,
-    };
-  });
+  look = computed<Look>(() => ({ ...this.settings(), title: this.title().trim(), image: this.image() }));
 
   private buffer?: AudioBuffer;
   private destroyed = false;
@@ -108,6 +101,11 @@ export class Soundwave {
 
   choose<K extends keyof Settings>(key: K, value: Settings[K]) {
     this.update({ [key]: value } as Partial<Settings>);
+  }
+
+  /** Slider or stepper change for a numeric setting; `delta` steps by the setting's step size. */
+  setNumber(key: Numeric, value: number, delta = 0) {
+    this.choose(key, snap(key, value + delta * RANGES[key][2]));
   }
 
   resetSettings() {
@@ -212,7 +210,7 @@ export class Soundwave {
       const supported = await canEncodeVideo('avc', { width, height })
         && await canEncodeAudio('aac', { numberOfChannels: buffer.numberOfChannels, sampleRate: buffer.sampleRate });
       if (!supported) throw new Error("This browser can't create MP4 videos. Try the latest Chrome, Edge or Safari.");
-      if (look.title) await document.fonts.load(`600 40px ${TITLE_FONT}`);
+      if (look.title) await document.fonts.load(titleFont(look, 40));
 
       const video = new CanvasSource(canvas, { codec: 'avc', quality: QUALITY_HIGH });
       const audio = new AudioBufferSource({ codec: 'aac', quality: QUALITY_HIGH });

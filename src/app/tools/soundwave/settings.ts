@@ -1,4 +1,4 @@
-import { ColorMode, Layout, Shape } from './draw';
+import { ColorMode, FONTS, Font, Layout, Shape } from './draw';
 
 export type Format = 'landscape' | 'portrait' | 'square';
 
@@ -28,6 +28,7 @@ export const OPTIONS = {
     { value: 'rainbow', label: 'Rainbow' },
   ] as { value: ColorMode; label: string }[],
   bars: [16, 32, 48, 64, 96, 128],
+  titleFont: (Object.keys(FONTS) as Font[]).map(value => ({ value, label: FONTS[value].label })),
 };
 
 /** Everything the user can pick that's worth remembering between visits (not the file, title or trim). */
@@ -50,16 +51,34 @@ export interface Settings {
   vizSize: number; // 0.25..1.5
   vizX: number; // -0.5..0.5 of frame width
   vizY: number; // -0.5..0.5 of frame height
+  titleFont: Font;
+  titleSize: number; // 1 = default size
+  titleX: number; // -0.5..0.5 of frame width
+  titleY: number; // -0.5..0.5 of frame height
 }
 
+/** Slider limits and stepper step for each numeric setting: [min, max, step]. */
 export const RANGES = {
-  imageSize: [0.25, 3],
-  imageX: [-0.5, 0.5],
-  imageY: [-0.5, 0.5],
-  vizSize: [0.25, 1.5],
-  vizX: [-0.5, 0.5],
-  vizY: [-0.5, 0.5],
+  sensitivity: [0.5, 2, 0.05],
+  smoothness: [0, 1, 0.05],
+  imageSize: [0.25, 3, 0.05],
+  imageX: [-0.5, 0.5, 0.01],
+  imageY: [-0.5, 0.5, 0.01],
+  vizSize: [0.25, 1.5, 0.05],
+  vizX: [-0.5, 0.5, 0.01],
+  vizY: [-0.5, 0.5, 0.01],
+  titleSize: [0.5, 3, 0.05],
+  titleX: [-0.5, 0.5, 0.01],
+  titleY: [-0.5, 0.5, 0.01],
 } as const;
+
+export type Numeric = keyof typeof RANGES;
+
+/** Clamps v to the setting's range and snaps it to its step (avoids 0.30000000000000004). */
+export function snap(key: Numeric, v: number): number {
+  const [min, max, step] = RANGES[key];
+  return Number(Math.min(max, Math.max(min, Math.round(v / step) * step)).toFixed(2));
+}
 
 // Video colours are the user's content, not site theme, so they're plain hex (what <input type="color"> needs).
 export const DEFAULTS: Settings = {
@@ -81,18 +100,22 @@ export const DEFAULTS: Settings = {
   vizSize: 1,
   vizX: 0,
   vizY: 0,
+  titleFont: 'pixel',
+  titleSize: 1,
+  titleX: 0,
+  titleY: 0,
 };
 
 /** Max drop per frame for a smoothness value (0.75 ≈ 0.06, the original feel). */
 export const fallFor = (smoothness: number) => 0.2 - 0.185 * smoothness;
 
 const HEX = /^#[0-9a-f]{6}$/i;
-const between = (v: unknown, lo: number, hi: number) => typeof v === 'number' && v >= lo && v <= hi;
 const oneOf = <T>(v: unknown, list: { value: T }[]) => list.some(o => o.value === v);
 
 /** Keeps only valid stored values, so a stale or edited localStorage entry can't break the page. */
 export function sanitize(stored: unknown): Settings {
   const s = (stored && typeof stored === 'object' ? stored : {}) as Record<string, unknown>;
+  const inRange = (k: Numeric) => typeof s[k] === 'number' && (s[k] as number) >= RANGES[k][0] && (s[k] as number) <= RANGES[k][1];
   const pick = <K extends keyof Settings>(key: K, valid: boolean) => (valid ? (s[key] as Settings[K]) : DEFAULTS[key]);
   return {
     format: pick('format', oneOf(s['format'], OPTIONS.format)),
@@ -103,15 +126,19 @@ export function sanitize(stored: unknown): Settings {
     bar2: pick('bar2', typeof s['bar2'] === 'string' && HEX.test(s['bar2'])),
     bg: pick('bg', typeof s['bg'] === 'string' && HEX.test(s['bg'])),
     bars: pick('bars', OPTIONS.bars.includes(s['bars'] as number)),
-    sensitivity: pick('sensitivity', between(s['sensitivity'], 0.5, 2)),
-    smoothness: pick('smoothness', between(s['smoothness'], 0, 1)),
+    sensitivity: pick('sensitivity', inRange('sensitivity')),
+    smoothness: pick('smoothness', inRange('smoothness')),
     glow: pick('glow', typeof s['glow'] === 'boolean'),
     caps: pick('caps', typeof s['caps'] === 'boolean'),
-    imageSize: pick('imageSize', between(s['imageSize'], ...RANGES.imageSize)),
-    imageX: pick('imageX', between(s['imageX'], ...RANGES.imageX)),
-    imageY: pick('imageY', between(s['imageY'], ...RANGES.imageY)),
-    vizSize: pick('vizSize', between(s['vizSize'], ...RANGES.vizSize)),
-    vizX: pick('vizX', between(s['vizX'], ...RANGES.vizX)),
-    vizY: pick('vizY', between(s['vizY'], ...RANGES.vizY)),
+    imageSize: pick('imageSize', inRange('imageSize')),
+    imageX: pick('imageX', inRange('imageX')),
+    imageY: pick('imageY', inRange('imageY')),
+    vizSize: pick('vizSize', inRange('vizSize')),
+    vizX: pick('vizX', inRange('vizX')),
+    vizY: pick('vizY', inRange('vizY')),
+    titleFont: pick('titleFont', oneOf(s['titleFont'], OPTIONS.titleFont)),
+    titleSize: pick('titleSize', inRange('titleSize')),
+    titleX: pick('titleX', inRange('titleX')),
+    titleY: pick('titleY', inRange('titleY')),
   };
 }

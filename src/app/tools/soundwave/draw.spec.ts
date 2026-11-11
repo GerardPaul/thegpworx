@@ -5,6 +5,7 @@ const BARS = 32;
 const base: Look = {
   layout: 'mirror', shape: 'pixel', colorMode: 'solid', bar: '#ff0000', bar2: '#0000ff', bg: '#00ff00',
   glow: false, caps: false, title: '', imageSize: 1, imageX: 0, imageY: 0, vizSize: 1, vizX: 0, vizY: 0,
+  titleFont: 'sans', titleSize: 1, titleX: 0, titleY: 0,
 };
 
 function canvas(width: number, height: number) {
@@ -93,6 +94,28 @@ describe('drawFrame', () => {
     expect(movedLeft).toBe(0); // all bars now sit in the right half
     expect(movedRight).toBeGreaterThan(0);
     expect(movedRight).toBeLessThan(right); // and they're smaller
+  });
+
+  it('moves and resizes the title', () => {
+    // Red pixels in the top or bottom half, with no bars (bars would be red too).
+    const topBottom = (look: Partial<Look>) => {
+      const ctx = canvas(320, 180);
+      drawFrame(ctx, undefined, 0, { ...base, layout: 'circle', vizSize: 0.01, title: 'HELLO', ...look });
+      const red = (y: number) => {
+        const px = ctx.getImageData(0, y, 320, 90).data;
+        let n = 0;
+        for (let i = 0; i < px.length; i += 4) if (px[i] > 200 && px[i + 1] < 60) n++;
+        return n;
+      };
+      return [red(0), red(90)];
+    };
+    const [top, bottom] = topBottom({});
+    expect(top).toBeGreaterThan(0);
+    expect(bottom).toBe(0);
+    const [movedTop, movedBottom] = topBottom({ titleY: 0.6 });
+    expect(movedTop).toBe(0);
+    expect(movedBottom).toBeGreaterThan(0);
+    expect(topBottom({ titleSize: 2 })[0]).toBeGreaterThan(top * 2); // bigger text, more pixels
   });
 
   it('shrinks the background image, showing the background colour around it', () => {

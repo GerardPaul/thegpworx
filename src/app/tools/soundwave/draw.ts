@@ -21,9 +21,26 @@ export interface Look {
   vizSize: number; // 1 = default bar size
   vizX: number; // offset as a fraction of frame width, 0 = centred
   vizY: number; // offset as a fraction of frame height, 0 = centred
+  titleFont: Font;
+  titleSize: number; // 1 = default size
+  titleX: number; // offset as a fraction of frame width, 0 = centred
+  titleY: number; // offset as a fraction of frame height, 0 = default (top)
 }
 
-export const TITLE_FONT = '"Pixelify Sans", sans-serif';
+// The two pixel fonts are already loaded by the site; the rest are system fonts, so nothing new is downloaded.
+export const FONTS = {
+  pixel: { label: 'Pixelify', css: '"Pixelify Sans", sans-serif' },
+  jersey: { label: 'Jersey', css: '"Jersey 10", sans-serif' },
+  sans: { label: 'Sans', css: 'Arial, Helvetica, sans-serif' },
+  serif: { label: 'Serif', css: 'Georgia, "Times New Roman", serif' },
+  mono: { label: 'Mono', css: '"Courier New", Courier, monospace' },
+  bold: { label: 'Impact', css: 'Impact, "Arial Black", sans-serif' },
+};
+export type Font = keyof typeof FONTS;
+
+/** Canvas font string for the title at a given frame size. */
+export const titleFont = (look: Look, min: number) =>
+  `600 ${Math.round(min * 0.07 * look.titleSize)}px ${FONTS[look.titleFont].css}`;
 
 const rgb = (hex: string) => [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16));
 
@@ -79,10 +96,10 @@ function drawForeground(
 
   if (look.title) {
     paint(barColor(look, 0, 1));
-    ctx.font = `600 ${Math.round(min * 0.07)}px ${TITLE_FONT}`;
+    ctx.font = titleFont(look, min);
     ctx.textAlign = 'center';
     ctx.textBaseline = 'top';
-    ctx.fillText(look.title, width / 2, min * 0.06, width * 0.9);
+    ctx.fillText(look.title, width / 2 + look.titleX * width, min * 0.06 + look.titleY * height, width * 0.9);
   }
 
   // Bars only (not the title) move and scale around the frame centre; the next frame resets the transform.
