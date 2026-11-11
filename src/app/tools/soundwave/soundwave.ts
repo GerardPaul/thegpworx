@@ -3,7 +3,7 @@ import { RouterLink } from '@angular/router';
 import {
   AudioBufferSource, BufferTarget, CanvasSource, Mp4OutputFormat, Output, QUALITY_HIGH, canEncodeAudio, canEncodeVideo,
 } from 'mediabunny';
-import { FPS, Palette, drawFrame, envelope } from './waveform';
+import { FPS, Palette, drawFrame, spectrum } from './spectrum';
 
 const WIDTH = 1280;
 const HEIGHT = 720;
@@ -30,7 +30,7 @@ export class Soundwave {
   exporting = computed(() => this.progress() !== null);
 
   private buffer?: AudioBuffer;
-  private env?: Float32Array;
+  private levels?: Float32Array;
   private destroyed = false;
 
   constructor() {
@@ -54,7 +54,7 @@ export class Soundwave {
     if (!file) return;
 
     this.revokeUrls();
-    this.buffer = this.env = undefined;
+    this.buffer = this.levels = undefined;
     this.error.set('');
     this.fileName.set(file.name);
     this.loading.set(true);
@@ -62,7 +62,7 @@ export class Soundwave {
       const buffer = await new OfflineAudioContext(1, 1, SAMPLE_RATE).decodeAudioData(await file.arrayBuffer());
       if (buffer.duration > MAX_MINUTES * 60) throw new Error(`Recordings up to ${MAX_MINUTES} minutes are supported.`);
       const channels = Array.from({ length: buffer.numberOfChannels }, (_, i) => buffer.getChannelData(i));
-      this.env = envelope(channels, buffer.sampleRate);
+      this.levels = spectrum(channels, buffer.sampleRate);
       this.buffer = buffer;
       this.audioUrl.set(URL.createObjectURL(file));
     } catch (e) {
@@ -76,8 +76,8 @@ export class Soundwave {
   }
 
   async export() {
-    const { buffer, env } = this;
-    if (!buffer || !env || this.exporting()) return;
+    const { buffer, levels } = this;
+    if (!buffer || !levels || this.exporting()) return;
     this.audio().nativeElement.pause();
     this.error.set('');
     this.revokeDownload();
@@ -104,7 +104,7 @@ export class Soundwave {
       const frames = Math.ceil(buffer.duration * FPS);
       for (let f = 0; f < frames; f++) {
         if (this.destroyed) throw new Error('Export cancelled.');
-        drawFrame(ctx, env, f, colors);
+        drawFrame(ctx, levels, f, colors);
         await video.add(f / FPS, 1 / FPS);
         if (f % FPS === 0) {
           this.progress.set(f / frames);
@@ -127,14 +127,14 @@ export class Soundwave {
   private drawPreview() {
     const ctx = this.canvas().nativeElement.getContext('2d')!;
     const frame = Math.floor(this.audio().nativeElement.currentTime * FPS);
-    drawFrame(ctx, this.env ?? new Float32Array(0), frame, this.palette());
+    drawFrame(ctx, this.levels ?? new Float32Array(0), frame, this.palette());
   }
 
   /** Current theme colours, so the video matches what the user sees. */
   private palette(): Palette {
     const css = getComputedStyle(document.documentElement);
     const token = (name: string) => css.getPropertyValue(name).trim();
-    return { bg: `rgb(${token('--surface')})`, played: `rgb(${token('--accent')})`, upcoming: `rgb(${token('--fg')} / 0.25)` };
+    return { bg: `rgb(${token('--surface')})`, bar: `rgb(${token('--accent')})` };
   }
 
   private revokeDownload() {

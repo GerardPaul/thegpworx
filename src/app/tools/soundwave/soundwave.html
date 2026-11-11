@@ -3,7 +3,7 @@
 
   <h1 class="cursor mt-6 text-4xl font-semibold sm:text-6xl">Soundwave<span class="text-error">.</span></h1>
   <p class="mt-4 max-w-3xl text-xl text-fg/80">
-    Turn a sound recording into a waveform video. Everything runs in your browser, so your audio never leaves your device.
+    Turn a sound recording into a video of bars that bounce with the music. Everything runs in your browser, so your audio never leaves your device.
   </p>
 
   <div class="mt-10 flex flex-wrap items-center gap-4">
@@ -21,10 +21,10 @@
 
   <div class="pixel-border relative mt-8 bg-surface">
     <canvas #canvas [width]="width" [height]="height" class="block aspect-video w-full"
-            role="img" [attr.aria-label]="fileName() ? 'Waveform of ' + fileName() : 'Empty waveform preview'"></canvas>
+            role="img" [attr.aria-label]="fileName() ? 'Audio visualizer for ' + fileName() : 'Empty audio visualizer preview'"></canvas>
     @if (!fileName()) {
       <p class="absolute inset-0 flex items-center justify-center p-6 text-center font-display text-muted">
-        Choose an audio file to see its waveform
+        Choose an audio file to see it move
       </p>
     }
   </div>

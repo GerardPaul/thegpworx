@@ -45,10 +45,10 @@ export const projects: Project[] = [
   {
     slug: 'soundwave',
     title: 'Soundwave',
-    tagline: 'Turn any sound recording into a waveform video, right in your browser.',
+    tagline: 'Turn any sound recording into an audio visualizer video, right in your browser.',
     description: [
-      'Soundwave turns a sound recording into an MP4 video of an animated waveform, synced to the audio and ready to share.',
-      'Everything runs in the browser: the audio is decoded with the Web Audio API, each frame is drawn on a canvas, and the video is encoded with WebCodecs. Nothing is uploaded, so recordings stay private and there is no server to pay for.',
+      'Soundwave turns a sound recording into an MP4 video of spectrum bars that bounce with the audio, ready to share.',
+      'Everything runs in the browser: the audio is decoded with the Web Audio API, split into frequency bands with an FFT, each frame is drawn on a canvas, and the video is encoded with WebCodecs. Nothing is uploaded, so recordings stay private and there is no server to pay for.',
     ],
     highlights: [
       'Exports MP4 (H.264 video + AAC audio)',
