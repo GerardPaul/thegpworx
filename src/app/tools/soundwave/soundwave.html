@@ -8,85 +8,210 @@
 
   <div class="mt-10 flex flex-wrap items-center gap-4">
     <label class="btn btn-primary cursor-pointer focus-within:outline-dashed focus-within:outline-[3px] focus-within:outline-offset-4 focus-within:outline-accent"
-           [class.pointer-events-none]="exporting() || loading()" [class.opacity-50]="exporting() || loading()">
+           [class.pointer-events-none]="busy()" [class.opacity-50]="busy()">
       Choose audio
-      <input type="file" accept="audio/*" class="sr-only" (change)="load($event)" [disabled]="exporting() || loading()">
+      <input type="file" accept="audio/*" class="sr-only" (change)="load($event)" [disabled]="busy()">
     </label>
-    @if (loading()) {
-      <span class="text-muted">Reading {{ fileName() }}…</span>
+    @if (status()) {
+      <span class="text-muted" role="status">{{ status() }}</span>
     } @else if (fileName()) {
       <span class="break-all text-muted">{{ fileName() }}</span>
     }
   </div>
 
-  <div class="pixel-border relative mt-8 bg-surface">
-    <canvas #canvas [width]="width" [height]="height" class="block aspect-video w-full"
+  <div class="pixel-border relative mt-8 flex justify-center bg-surface">
+    <canvas #canvas [width]="size().width" [height]="size().height" class="block h-auto max-h-[70svh] w-auto max-w-full"
             role="img" [attr.aria-label]="fileName() ? 'Audio visualizer for ' + fileName() : 'Empty audio visualizer preview'"></canvas>
     @if (!fileName()) {
-      <p class="absolute inset-0 flex items-center justify-center p-6 text-center font-display text-muted">
-        Choose an audio file to see it move
-      </p>
+      <p class="absolute inset-x-0 bottom-4 p-2 text-center font-display text-muted">Choose an audio file to see it move</p>
     }
   </div>
 
   <audio #audio controls [src]="audioUrl() ?? ''" class="mt-6 w-full" [class.hidden]="!audioUrl()"></audio>
 
-  <div class="mt-8 grid gap-8 md:grid-cols-3">
-    <fieldset [disabled]="exporting()">
-      <legend class="font-display text-sm uppercase tracking-widest text-muted">Layout</legend>
-      <div class="mt-3 flex flex-wrap gap-3">
-        @for (o of layouts; track o.value) {
-          <button type="button" (click)="layout.set(o.value)" [attr.aria-pressed]="layout() === o.value"
-                  class="btn btn-sm disabled:opacity-50" [class.btn-primary]="layout() === o.value" [class.btn-secondary]="layout() !== o.value">
-            {{ o.label }}
-          </button>
-        }
-      </div>
-    </fieldset>
-
-    <fieldset [disabled]="exporting()">
-      <legend class="font-display text-sm uppercase tracking-widest text-muted">Bar shape</legend>
-      <div class="mt-3 flex flex-wrap gap-3">
-        @for (o of shapes; track o.value) {
-          <button type="button" (click)="shape.set(o.value)" [attr.aria-pressed]="shape() === o.value"
-                  class="btn btn-sm disabled:opacity-50" [class.btn-primary]="shape() === o.value" [class.btn-secondary]="shape() !== o.value">
-            {{ o.label }}
-          </button>
-        }
-      </div>
-    </fieldset>
-
-    <fieldset [disabled]="exporting()">
-      <legend class="font-display text-sm uppercase tracking-widest text-muted">Colors</legend>
-      <div class="mt-3 flex flex-wrap items-center gap-4">
-        <label class="flex items-center gap-2 font-display text-sm">
-          <input type="color" [value]="barColor()" (input)="barColor.set($any($event.target).value)"
-                 class="pixel-border h-8 w-10 cursor-pointer bg-surface p-0.5 [--px-b:2px]">
-          Bars
-        </label>
-        <label class="flex items-center gap-2 font-display text-sm">
-          <input type="color" [value]="bgColor()" (input)="bgColor.set($any($event.target).value)"
-                 class="pixel-border h-8 w-10 cursor-pointer bg-surface p-0.5 [--px-b:2px]">
-          Background
-        </label>
-      </div>
-      <div class="mt-3 flex flex-wrap gap-3">
-        <button type="button" class="btn btn-sm disabled:opacity-50" (click)="bgColor.set(greenScreen)"
-                [attr.aria-pressed]="bgColor() === greenScreen"
-                [class.btn-primary]="bgColor() === greenScreen" [class.btn-secondary]="bgColor() !== greenScreen">
-          Green screen
+  <!-- One pixel toggle group: buttons for `list`, the one matching settings()[key] is pressed. -->
+  <ng-template #toggles let-key="key" let-list="list">
+    <div class="mt-2 flex flex-wrap gap-3">
+      @for (o of list; track o.value) {
+        <button type="button" (click)="choose(key, o.value)" [attr.aria-pressed]="$any(settings())[key] === o.value"
+                class="btn btn-sm disabled:opacity-50"
+                [class.btn-primary]="$any(settings())[key] === o.value" [class.btn-secondary]="$any(settings())[key] !== o.value">
+          {{ o.label }}
         </button>
-        <button type="button" class="btn btn-secondary btn-sm disabled:opacity-50" (click)="resetColors()">Reset</button>
-      </div>
-      @if (bgColor() === greenScreen) {
-        <p class="mt-3 text-sm text-muted">Key out pure green (#00FF00) in your video editor to keep only the bars.</p>
       }
-    </fieldset>
-  </div>
+    </div>
+  </ng-template>
 
-  <div class="mt-8 flex flex-wrap items-center gap-6">
+  <fieldset [disabled]="busy()" class="mt-10 grid gap-10 md:grid-cols-3">
+    <legend class="sr-only">Video settings</legend>
+
+    <!-- Video -->
+    <div class="space-y-6">
+      <h2 class="text-2xl font-semibold">Video</h2>
+      <div>
+        <span class="font-display text-sm uppercase tracking-widest text-muted">Format</span>
+        <ng-container [ngTemplateOutlet]="toggles" [ngTemplateOutletContext]="{ key: 'format', list: options.format }" />
+      </div>
+      <label class="block">
+        <span class="font-display text-sm uppercase tracking-widest text-muted">Title</span>
+        <input type="text" maxlength="80" placeholder="Song name or caption" [value]="title()" (input)="title.set($any($event.target).value)"
+               class="pixel-border mt-2 block w-full bg-surface px-3 py-2 text-fg placeholder:text-muted [--px-b:2px]">
+      </label>
+      <div>
+        <span class="font-display text-sm uppercase tracking-widest text-muted">Background image</span>
+        <div class="mt-2 flex flex-wrap items-center gap-3">
+          <label class="btn btn-secondary btn-sm cursor-pointer focus-within:outline-dashed focus-within:outline-[3px] focus-within:outline-offset-4 focus-within:outline-accent">
+            {{ imageName() ? 'Change' : 'Choose image' }}
+            <input type="file" accept="image/*" class="sr-only" (change)="loadImage($event)">
+          </label>
+          @if (imageName()) {
+            <button type="button" class="btn btn-secondary btn-sm" (click)="clearImage()">Remove</button>
+            <span class="w-full break-all text-sm text-muted">{{ imageName() }}</span>
+          }
+        </div>
+        @if (imageName()) {
+          <label class="mt-3 block text-sm">
+            Image size: {{ (settings().imageSize * 100).toFixed(0) }}%
+            <input type="range" [min]="ranges.imageSize[0]" [max]="ranges.imageSize[1]" step="0.05" [value]="settings().imageSize"
+                   (input)="choose('imageSize', numberFrom($event))" class="mt-1 block w-full accent-accent">
+          </label>
+        }
+      </div>
+      @if (audioUrl()) {
+        <div>
+          <span class="font-display text-sm uppercase tracking-widest text-muted">Trim (seconds)</span>
+          <div class="mt-2 grid grid-cols-2 gap-4">
+            <label class="block text-sm">
+              Start
+              <input type="number" min="0" [max]="duration()" step="0.1" [value]="trimStart()" (input)="trimStart.set(numberFrom($event))"
+                     class="pixel-border mt-1 block w-full bg-surface px-3 py-2 text-fg [--px-b:2px]">
+            </label>
+            <label class="block text-sm">
+              End
+              <input type="number" min="0" [max]="duration()" step="0.1" [value]="trimEnd()" (input)="trimEnd.set(numberFrom($event))"
+                     class="pixel-border mt-1 block w-full bg-surface px-3 py-2 text-fg [--px-b:2px]">
+            </label>
+            <button type="button" class="btn btn-secondary btn-sm" (click)="trimToPlayhead('start')">Start here</button>
+            <button type="button" class="btn btn-secondary btn-sm" (click)="trimToPlayhead('end')">End here</button>
+          </div>
+          @if (trimError()) {
+            <p class="mt-2 flex gap-2 text-sm text-fg"><span class="text-error" aria-hidden="true">!</span>{{ trimError() }}</p>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Bars -->
+    <div class="space-y-6">
+      <h2 class="text-2xl font-semibold">Bars</h2>
+      <div>
+        <span class="font-display text-sm uppercase tracking-widest text-muted">Layout</span>
+        <ng-container [ngTemplateOutlet]="toggles" [ngTemplateOutletContext]="{ key: 'layout', list: options.layout }" />
+      </div>
+      <div>
+        <span class="font-display text-sm uppercase tracking-widest text-muted">Shape</span>
+        <ng-container [ngTemplateOutlet]="toggles" [ngTemplateOutletContext]="{ key: 'shape', list: options.shape }" />
+      </div>
+      <div>
+        <span class="font-display text-sm uppercase tracking-widest text-muted">Size &amp; position</span>
+        <label class="mt-2 block text-sm">
+          Size: {{ (settings().vizSize * 100).toFixed(0) }}%
+          <input type="range" [min]="ranges.vizSize[0]" [max]="ranges.vizSize[1]" step="0.05" [value]="settings().vizSize"
+                 (input)="choose('vizSize', numberFrom($event))" class="mt-1 block w-full accent-accent">
+        </label>
+        <label class="mt-2 block text-sm">
+          Left / right
+          <input type="range" [min]="ranges.vizX[0]" [max]="ranges.vizX[1]" step="0.01" [value]="settings().vizX"
+                 (input)="choose('vizX', numberFrom($event))" class="mt-1 block w-full accent-accent">
+        </label>
+        <label class="mt-2 block text-sm">
+          Up / down
+          <input type="range" [min]="ranges.vizY[0]" [max]="ranges.vizY[1]" step="0.01" [value]="settings().vizY"
+                 (input)="choose('vizY', numberFrom($event))" class="mt-1 block w-full accent-accent">
+        </label>
+        <button type="button" class="btn btn-secondary btn-sm mt-3 disabled:opacity-50" (click)="update({ vizSize: 1, vizX: 0, vizY: 0 })">
+          Center
+        </button>
+      </div>
+      <label class="block">
+        <span class="font-display text-sm uppercase tracking-widest text-muted">Number of bars</span>
+        <select (change)="choose('bars', +$any($event.target).value)"
+                class="pixel-border mt-2 block w-full bg-surface px-3 py-2 text-fg [--px-b:2px]">
+          @for (n of options.bars; track n) { <option [value]="n" [selected]="settings().bars === n">{{ n }}</option> }
+        </select>
+      </label>
+      <label class="block">
+        <span class="font-display text-sm uppercase tracking-widest text-muted">Sensitivity</span>
+        <input type="range" min="0.5" max="2" step="0.05" [value]="settings().sensitivity"
+               (input)="choose('sensitivity', numberFrom($event))" class="mt-2 block w-full accent-accent">
+      </label>
+      <label class="block">
+        <span class="font-display text-sm uppercase tracking-widest text-muted">Smoothness</span>
+        <input type="range" min="0" max="1" step="0.05" [value]="settings().smoothness"
+               (input)="choose('smoothness', numberFrom($event))" class="mt-2 block w-full accent-accent">
+      </label>
+      <div>
+        <span class="font-display text-sm uppercase tracking-widest text-muted">Effects</span>
+        <div class="mt-2 flex flex-wrap gap-3">
+          <button type="button" class="btn btn-sm disabled:opacity-50" (click)="choose('caps', !settings().caps)" [attr.aria-pressed]="settings().caps"
+                  [class.btn-primary]="settings().caps" [class.btn-secondary]="!settings().caps">Peak caps</button>
+          <button type="button" class="btn btn-sm disabled:opacity-50" (click)="choose('glow', !settings().glow)" [attr.aria-pressed]="settings().glow"
+                  [class.btn-primary]="settings().glow" [class.btn-secondary]="!settings().glow">Glow</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Colors -->
+    <div class="space-y-6">
+      <h2 class="text-2xl font-semibold">Colors</h2>
+      <div>
+        <span class="font-display text-sm uppercase tracking-widest text-muted">Bar colors</span>
+        <ng-container [ngTemplateOutlet]="toggles" [ngTemplateOutletContext]="{ key: 'colorMode', list: options.colorMode }" />
+        @if (settings().colorMode !== 'rainbow') {
+          <div class="mt-3 flex flex-wrap items-center gap-4">
+            <label class="flex items-center gap-2 font-display text-sm">
+              <input type="color" [value]="settings().bar" (input)="choose('bar', $any($event.target).value)"
+                     class="pixel-border h-8 w-10 cursor-pointer bg-surface p-0.5 [--px-b:2px]">
+              {{ settings().colorMode === 'gradient' ? 'From' : 'Bars' }}
+            </label>
+            @if (settings().colorMode === 'gradient') {
+              <label class="flex items-center gap-2 font-display text-sm">
+                <input type="color" [value]="settings().bar2" (input)="choose('bar2', $any($event.target).value)"
+                       class="pixel-border h-8 w-10 cursor-pointer bg-surface p-0.5 [--px-b:2px]">
+                To
+              </label>
+            }
+          </div>
+        }
+      </div>
+      <div>
+        <span class="font-display text-sm uppercase tracking-widest text-muted">Background</span>
+        <div class="mt-2 flex flex-wrap items-center gap-3">
+          <label class="flex items-center gap-2 font-display text-sm">
+            <input type="color" [value]="settings().bg" (input)="choose('bg', $any($event.target).value)"
+                   class="pixel-border h-8 w-10 cursor-pointer bg-surface p-0.5 [--px-b:2px]">
+            Color
+          </label>
+          <button type="button" class="btn btn-sm disabled:opacity-50" (click)="choose('bg', greenScreen)"
+                  [attr.aria-pressed]="settings().bg === greenScreen"
+                  [class.btn-primary]="settings().bg === greenScreen" [class.btn-secondary]="settings().bg !== greenScreen">
+            Green screen
+          </button>
+        </div>
+        @if (settings().bg === greenScreen) {
+          <p class="mt-3 text-sm text-muted">
+            Key out pure green (#00FF00) in your video editor to keep only the bars. Turn off Glow and the background image for the cleanest key.
+          </p>
+        }
+      </div>
+      <button type="button" class="btn btn-secondary btn-sm disabled:opacity-50" (click)="resetSettings()">Reset all settings</button>
+      <p class="text-sm text-muted">Your settings are remembered on this device.</p>
+    </div>
+  </fieldset>
+
+  <div class="mt-10 flex flex-wrap items-center gap-6">
     <button type="button" class="btn btn-primary disabled:pointer-events-none disabled:opacity-50"
-            (click)="export()" [disabled]="!audioUrl() || exporting()">
+            (click)="export()" [disabled]="!audioUrl() || busy() || !!trimError()">
       Export MP4
     </button>
 

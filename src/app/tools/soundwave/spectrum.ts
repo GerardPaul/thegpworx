@@ -1,20 +1,9 @@
 export const FPS = 30;
-export const BARS = 64;
 const FFT_SIZE = 2048; // ~23 Hz per bin at 48 kHz, enough to separate bass bars
 const MIN_HZ = 50;
 const MAX_HZ = 16000;
 const RANGE_DB = 50; // levels this far below the recording's loudest point show as zero
-const FALL = 0.06; // max drop per frame: bars jump up instantly but fall smoothly
-
-export type Layout = 'mirror' | 'bottom' | 'circle';
-export type Shape = 'pixel' | 'solid' | 'rounded';
-
-export interface Look {
-  layout: Layout;
-  shape: Shape;
-  bar: string;
-  bg: string;
-}
+const CAP_FALL = 0.008; // peak caps drift down much slower than bars
 
 /** In-place iterative radix-2 FFT; length must be a power of two. */
 export function fft(re: Float64Array, im: Float64Array) {
@@ -49,10 +38,11 @@ export function fft(re: Float64Array, im: Float64Array) {
 }
 
 /**
- * Bar heights (0..1) for every video frame: frame f's bars are at [f * bars, (f + 1) * bars),
+ * Raw bar levels (0..1) for every video frame: frame f's bars are at [f * bars, (f + 1) * bars),
  * bass on the left. Bars are log-spaced in frequency so each covers a similar musical range.
+ * This is the slow step (one FFT per frame); `animate` turns it into what's drawn.
  */
-export function spectrum(channels: Float32Array[], sampleRate: number, fps = FPS, bars = BARS): Float32Array {
+export function spectrum(channels: Float32Array[], sampleRate: number, bars: number, fps = FPS): Float32Array {
   const length = channels[0]?.length ?? 0;
   const frames = Math.ceil(length / (sampleRate / fps));
   const out = new Float32Array(frames * bars);
@@ -90,64 +80,27 @@ export function spectrum(channels: Float32Array[], sampleRate: number, fps = FPS
 
   if (!Number.isFinite(peak)) return out.fill(0);
   const floor = peak - RANGE_DB;
-  for (let f = 0; f < frames; f++) {
-    for (let b = 0; b < bars; b++) {
-      const i = f * bars + b;
-      const level = Math.min(1, Math.max(0, (out[i] - floor) / RANGE_DB));
-      out[i] = f ? Math.max(level, out[i - bars] - FALL) : level;
-    }
-  }
+  for (let i = 0; i < out.length; i++) out[i] = Math.min(1, Math.max(0, (out[i] - floor) / RANGE_DB));
   return out;
 }
 
-/** Draws one video frame of spectrum bars in the chosen layout, shape and colours. */
-export function drawFrame(ctx: CanvasRenderingContext2D, levels: Float32Array, frame: number, look: Look, bars = BARS) {
-  const { width, height } = ctx.canvas;
-  ctx.fillStyle = look.bg;
-  ctx.fillRect(0, 0, width, height);
-  ctx.fillStyle = look.bar;
+export interface Animated {
+  bars: number;
+  levels: Float32Array; // bar heights 0..1, same layout as `spectrum`
+  caps: Float32Array; // peak cap heights 0..1
+}
 
-  // 'pixel' snaps lengths to blocks (matches the site's pixel theme); the others are smooth.
-  const block = Math.max(2, Math.round(height / 90));
-  const size = (level: number, max: number) =>
-    look.shape === 'pixel' ? Math.max(1, Math.round((level * max) / block)) * block : Math.max(block, level * max);
-  const rect = (x: number, y: number, w: number, h: number) => {
-    ctx.beginPath();
-    if (look.shape === 'rounded') ctx.roundRect(x, y, w, h, w / 2);
-    else ctx.rect(Math.round(x), Math.round(y), Math.round(w), Math.round(h));
-    ctx.fill();
-  };
-  const level = (b: number) => levels[frame * bars + b] ?? 0;
-
-  if (look.layout === 'circle') {
-    // Bass at the top, treble towards the bottom, mirrored left/right.
-    const radius = Math.min(width, height) * 0.2;
-    const barWidth = Math.max(2, ((Math.PI * radius) / bars) * 0.6);
-    for (let b = 0; b < bars; b++) {
-      const len = size(level(b), Math.min(width, height) * 0.25);
-      const angle = ((b + 0.5) / bars) * Math.PI;
-      for (const a of [angle, -angle]) {
-        ctx.save();
-        ctx.translate(width / 2, height / 2);
-        ctx.rotate(a);
-        rect(-barWidth / 2, -radius - len, barWidth, len);
-        ctx.restore();
-      }
-    }
-    return;
+/**
+ * Applies sensitivity (gain) and smoothing: bars jump up instantly but drop at most `fall` per frame,
+ * and peak caps sit on the highest recent level and drift down slowly. Cheap, so it reruns on every slider move.
+ */
+export function animate(raw: Float32Array, bars: number, gain: number, fall: number): Animated {
+  const levels = new Float32Array(raw.length);
+  const caps = new Float32Array(raw.length);
+  for (let i = 0; i < raw.length; i++) {
+    const level = Math.min(1, raw[i] * gain);
+    levels[i] = i >= bars ? Math.max(level, levels[i - bars] - fall) : level;
+    caps[i] = i >= bars ? Math.max(levels[i], caps[i - bars] - CAP_FALL) : levels[i];
   }
-
-  const pad = width * 0.05;
-  const slot = (width - 2 * pad) / bars;
-  const barWidth = Math.max(1, Math.floor(slot * 0.6));
-  for (let b = 0; b < bars; b++) {
-    const x = pad + b * slot + (slot - barWidth) / 2;
-    if (look.layout === 'bottom') {
-      const h = size(level(b), height * 0.7);
-      rect(x, height * 0.85 - h, barWidth, h);
-    } else {
-      const half = size(level(b), height * 0.4);
-      rect(x, height / 2 - half, barWidth, half * 2);
-    }
-  }
+  return { bars, levels, caps };
 }
