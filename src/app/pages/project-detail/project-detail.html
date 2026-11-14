@@ -48,11 +48,40 @@
         <section class="mt-16">
           <h2 class="text-sm uppercase tracking-widest text-muted">Screenshots</h2>
           <div class="mt-6 grid gap-6 sm:grid-cols-2">
-            @for (shot of p.screenshots; track shot; let i = $index) {
-              <app-project-image [src]="shot" [alt]="p.title + ' screenshot ' + (i + 1)" />
+            @for (shot of p.screenshots; track shot.src; let i = $index) {
+              <figure>
+                <button type="button" class="group block w-full text-left" (click)="shown.set(i); viewer.showModal()"
+                        [attr.aria-label]="'View larger: ' + shot.caption">
+                  <app-project-image [src]="shot.src" [alt]="shot.caption" class="group-hover:[--px-c:rgb(var(--accent))]" />
+                </button>
+                <figcaption class="mt-3 text-muted">{{ shot.caption }}</figcaption>
+              </figure>
             }
           </div>
         </section>
+
+        <!-- Native modal: Esc closes and focus returns to the thumbnail that opened it. -->
+        <dialog #viewer aria-label="Screenshot viewer"
+                class="m-0 h-[100svh] max-h-none w-full max-w-none flex-col items-center justify-center gap-4 bg-bg/95 p-4 text-fg open:flex sm:p-8"
+                (click)="$event.target === viewer && viewer.close()"
+                (keydown.arrowleft)="step(-1)" (keydown.arrowright)="step(1)">
+          @if (current(); as shot) {
+            <figure class="flex min-h-0 flex-col items-center gap-3">
+              <img [src]="shot.src" [alt]="shot.caption" loading="lazy" class="pixel-border min-h-0 max-h-[75svh] w-auto max-w-full bg-surface object-contain">
+              <figcaption class="text-center text-lg">
+                {{ shot.caption }}
+                <span class="ml-2 font-display text-sm text-muted">{{ shown()! + 1 }} / {{ p.screenshots!.length }}</span>
+              </figcaption>
+            </figure>
+            <div class="flex flex-wrap justify-center gap-3">
+              @if (p.screenshots!.length > 1) {
+                <button type="button" class="btn btn-secondary btn-sm" (click)="step(-1)">Previous</button>
+                <button type="button" class="btn btn-secondary btn-sm" (click)="step(1)">Next</button>
+              }
+              <button type="button" class="btn btn-primary btn-sm" (click)="viewer.close()">Close</button>
+            </div>
+          }
+        </dialog>
       }
     </article>
 

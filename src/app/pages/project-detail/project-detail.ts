@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, input } from '@angular/core';
+import { Component, computed, effect, inject, input, signal } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
 import { RouterLink } from '@angular/router';
 import { projectLabel, projects } from '../../data/projects';
@@ -18,6 +18,16 @@ export class ProjectDetail {
   prev = computed(() => projects[this.index() - 1]);
   next = computed(() => projects[this.index() + 1]);
   label = projectLabel;
+
+  /** Index of the screenshot open in the viewer. */
+  shown = signal(0);
+  current = computed(() => this.project()?.screenshots?.[this.shown()]);
+
+  /** Previous / next screenshot in the viewer, wrapping around at either end. */
+  step(delta: number) {
+    const n = this.project()?.screenshots?.length ?? 0;
+    if (n) this.shown.update(i => (i + delta + n) % n);
+  }
 
   constructor() {
     const title = inject(Title);

@@ -7,11 +7,16 @@ export interface Project {
   tech: string[];
   platform: 'web' | 'mobile'; // home page toggle + device frame (laptop / phone)
   cover?: string;         // main screenshot; omit until provided -> placeholder
-  screenshots?: string[]; // gallery on the detail page
+  screenshots?: Screenshot[]; // gallery on the detail page
   links?: { live?: string; repo?: string };
   tool?: string;          // route of a tool that runs on this site -> "Try it" button
   concept?: boolean;      // mock or pitch, not real client work -> "Concept" label
   year?: number;
+}
+
+export interface Screenshot {
+  src: string;
+  caption: string;         // shown under the image and used as its alt text
 }
 
 /** Card label; no label = archive (screenshots only). */
@@ -57,6 +62,12 @@ export const projects: Project[] = [
     ],
     tech: ['Angular', 'Tailwind CSS', 'WebCodecs'],
     platform: 'web',
+    cover: img('soundwave'),
+    screenshots: [
+      { src: img('soundwave', '01.png'), caption: 'Mirrored pixel bars, the default look' },
+      { src: img('soundwave', '02.png'), caption: 'Bottom bars with a gradient, peak caps and glow' },
+      { src: img('soundwave', '03.png'), caption: 'Circle of 96 rainbow pixel bars with glow' },
+    ],
     tool: '/tools/soundwave',
     year: 2026,
   },
