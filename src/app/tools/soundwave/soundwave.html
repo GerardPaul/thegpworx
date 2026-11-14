@@ -1,4 +1,4 @@
-<div class="mx-auto max-w-5xl px-4 py-12 sm:px-6 sm:py-16">
+<div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16">
   <a routerLink="/projects/soundwave" class="btn btn-secondary btn-sm">← About this tool</a>
 
   <h1 class="cursor mt-6 text-4xl font-semibold sm:text-6xl">Soundwave<span class="text-error">.</span></h1>
@@ -19,15 +19,19 @@
     }
   </div>
 
-  <div class="pixel-border relative mt-8 flex justify-center bg-surface">
-    <canvas #canvas [width]="size().width" [height]="size().height" class="block h-auto max-h-[70svh] w-auto max-w-full"
+  <!-- Preview stays in view while adjusting: pinned on top on phones, a sticky left column on wide screens. -->
+  <div class="mt-8 lg:grid lg:grid-cols-[3fr_2fr] lg:items-start lg:gap-10">
+  <div class="sticky top-0 z-10 bg-bg pb-4 pt-2 lg:top-4 lg:pt-0">
+  <div class="pixel-border relative flex justify-center bg-surface">
+    <canvas #canvas [width]="size().width" [height]="size().height" class="block h-auto max-h-[35svh] lg:max-h-[75svh] w-auto max-w-full"
             role="img" [attr.aria-label]="fileName() ? 'Audio visualizer for ' + fileName() : 'Empty audio visualizer preview'"></canvas>
     @if (!fileName()) {
       <p class="absolute inset-x-0 bottom-4 p-2 text-center font-display text-muted">Choose an audio file to see it move</p>
     }
   </div>
 
-  <audio #audio controls [src]="audioUrl() ?? ''" class="mt-6 w-full" [class.hidden]="!audioUrl()"></audio>
+  <audio #audio controls [src]="audioUrl() ?? ''" class="mt-4 w-full" [class.hidden]="!audioUrl()"></audio>
+  </div>
 
   <!-- One pixel toggle group: buttons for `list`, the one matching settings()[key] is pressed. -->
   <ng-template #toggles let-key="key" let-list="list">
@@ -61,7 +65,7 @@
     </div>
   </ng-template>
 
-  <fieldset [disabled]="busy()" class="mt-10 grid gap-10 md:grid-cols-3">
+  <fieldset [disabled]="busy()" class="mt-6 grid gap-10 md:grid-cols-3 lg:mt-0 lg:grid-cols-1">
     <legend class="sr-only">Video settings</legend>
 
     <!-- Video -->
@@ -223,6 +227,7 @@
       <p class="text-sm text-muted">Your settings are remembered on this device.</p>
     </div>
   </fieldset>
+  </div>
 
   <div class="mt-10 flex flex-wrap items-center gap-6">
     <button type="button" class="btn btn-primary disabled:pointer-events-none disabled:opacity-50"
