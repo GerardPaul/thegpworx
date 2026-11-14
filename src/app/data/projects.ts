@@ -116,6 +116,13 @@ export const projects: Project[] = [
     tech: ['PHP', 'jQuery'],
     platform: 'web',
     cover: img('dts'),
+    screenshots: [
+      { src: img('dts', '01.png'), caption: 'Sign in' },
+      { src: img('dts', '02.png'), caption: 'All documents with status icons, deadlines and search' },
+      { src: img('dts', '03.png'), caption: 'Users with their type and division' },
+      { src: img('dts', '04.png'), caption: 'Divisions of the office' },
+      { src: img('dts', '05.png'), caption: 'Activity log of every action taken' },
+    ],
   },
   {
     slug: 'mak',
@@ -139,6 +146,15 @@ export const projects: Project[] = [
     tech: ['PHP', 'jQuery'],
     platform: 'web',
     cover: img('sig-inventory'),
+    screenshots: [
+      { src: img('sig-inventory', '01.png'), caption: 'Sign in' },
+      { src: img('sig-inventory', '02.png'), caption: 'Inventory by floor: owner, location, computer, processor and RAM' },
+      { src: img('sig-inventory', '03.png'), caption: 'Paged inventory list' },
+      { src: img('sig-inventory', '04.png'), caption: 'Second floor tab' },
+      { src: img('sig-inventory', '05.png'), caption: 'Add entry form for a computer and its monitors' },
+      { src: img('sig-inventory', '06.png'), caption: 'Entry details, locked until Enable Edit is pressed' },
+      { src: img('sig-inventory', '07.png'), caption: 'Print options to pick which floors to print' },
+    ],
   },
   {
     slug: 'ccam',
