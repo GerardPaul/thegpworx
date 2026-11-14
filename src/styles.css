@@ -67,13 +67,9 @@
     @apply bg-accent text-on-accent;
   }
 
-  /* Faint pixel grid behind everything, like graph paper / a game map. */
+  /* The pixel grid behind everything is a canvas: layout/pixel-field.ts. */
   body {
     @apply bg-bg font-body text-fg antialiased transition-colors;
-    background-image:
-      linear-gradient(rgb(var(--fg) / 0.035) 1px, transparent 1px),
-      linear-gradient(90deg, rgb(var(--fg) / 0.035) 1px, transparent 1px);
-    background-size: 32px 32px;
   }
 }
 
