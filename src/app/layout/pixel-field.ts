@@ -15,6 +15,7 @@ const IDLE_AFTER = 4000;       // ms without pointer movement before the idle wa
 const IDLE_EVERY = 6000;       // ms from one idle sweep to the next
 const IDLE_SWEEP = 3000;       // ms for one sweep to cross the screen
 const LEVELS = 4;
+const FRAME_MS = 1000 / 30;    // 30 fps: the motion is slow and stepped, 60 would only double the cost
 
 export interface Ripple { x: number; y: number; t0: number }
 
@@ -34,8 +35,9 @@ export function idleFront(idleMs: number, diagonal: number): number | null {
   return t > IDLE_SWEEP ? null : (t / IDLE_SWEEP) * (diagonal + 2 * WIDTH) - WIDTH;
 }
 
-/** Rounds 0..1 to a few steps so colour changes in pixel-y jumps instead of a smooth fade. */
-export const quantize = (v: number) => Math.round(Math.min(1, Math.max(0, v)) * LEVELS) / LEVELS;
+/** Step 0..LEVELS for a 0..1 value, so colour changes in pixel-y jumps instead of a smooth fade. */
+const level = (v: number) => Math.round(Math.min(1, Math.max(0, v)) * LEVELS);
+export const quantize = (v: number) => level(v) / LEVELS;
 
 export const cellSize = (w: number, h: number) => Math.max(CELL, Math.ceil(Math.sqrt((w * h) / MAX_CELLS)));
 
@@ -59,6 +61,8 @@ export class PixelField {
       const ctx = canvas.getContext('2d');
       if (!ctx) return;
       const motion = matchMedia('(prefers-reduced-motion: reduce)');
+      // Touch devices skip the always-on breathing to save battery; taps and the idle wave still animate.
+      const coarse = matchMedia('(pointer: coarse)');
 
       let w = 0, h = 0, cell = CELL, cols = 0, rows = 0;
       let phases = new Float32Array(0);
@@ -82,43 +86,63 @@ export class PixelField {
         phases = Float32Array.from({ length: cols * rows }, () => Math.random() * Math.PI * 2);
       };
 
-      const draw = (t: number, animated: boolean) => {
-        ctx.clearRect(0, 0, w, h);
-        ripples = ripples.filter(r => t - r.t0 <= RIPPLE_LIFE);
-        const front = animated ? idleFront(t - lastMove, (w + h) / Math.SQRT2) : null;
-        const breath = (t / BREATH_MS) * Math.PI * 2;
+      // Cells grouped by brightness step, so each step is one path + one fill instead of a fill per cell.
+      const buckets = Array.from({ length: LEVELS + 1 }, () => [] as number[]);
+      const fillBuckets = (color: string, alphaAt: (q: number) => number, from: number) => {
         const size = cell - 1; // 1px gap between tiles reads as the grid
-
-        ctx.fillStyle = fg;
-        for (let r = 0, i = 0; r < rows; r++) {
-          for (let c = 0; c < cols; c++, i++) {
-            const b = animated ? quantize(0.5 + 0.5 * Math.sin(breath + phases[i])) : 0.5;
-            ctx.globalAlpha = BREATH_MIN + b * (BREATH_MAX - BREATH_MIN);
-            ctx.fillRect(c * cell + 1, r * cell + 1, size, size);
-          }
-        }
-
-        if (animated && (ripples.length || front !== null)) {
-          ctx.fillStyle = accent;
-          for (let r = 0; r < rows; r++) {
-            for (let c = 0; c < cols; c++) {
-              const x = (c + 0.5) * cell, y = (r + 0.5) * cell;
-              let v = front === null ? 0 : band((x + y) / Math.SQRT2, front);
-              for (const p of ripples) v += ring(Math.hypot(x - p.x, y - p.y), t - p.t0);
-              const q = quantize(v);
-              if (!q) continue;
-              ctx.globalAlpha = q * WAVE_ALPHA;
-              ctx.fillRect(c * cell + 1, r * cell + 1, size, size);
-            }
-          }
+        ctx.fillStyle = color;
+        for (let l = from; l <= LEVELS; l++) {
+          const cells = buckets[l];
+          if (!cells.length) continue;
+          ctx.globalAlpha = alphaAt(l / LEVELS);
+          ctx.beginPath();
+          for (const i of cells) ctx.rect((i % cols) * cell + 1, Math.floor(i / cols) * cell + 1, size, size);
+          ctx.fill();
+          cells.length = 0;
         }
         ctx.globalAlpha = 1;
       };
 
-      const tick = (t: number) => { draw(t, true); frame = requestAnimationFrame(tick); };
+      const draw = (t: number, animated: boolean) => {
+        ctx.clearRect(0, 0, w, h);
+        ripples = ripples.filter(r => t - r.t0 <= RIPPLE_LIFE);
+        const front = animated ? idleFront(t - lastMove, (w + h) / Math.SQRT2) : null;
+        const breathe = animated && !coarse.matches;
+        const breath = (t / BREATH_MS) * Math.PI * 2;
+
+        for (let i = 0; i < cols * rows; i++) {
+          buckets[breathe ? level(0.5 + 0.5 * Math.sin(breath + phases[i])) : LEVELS / 2].push(i);
+        }
+        fillBuckets(fg, q => BREATH_MIN + q * (BREATH_MAX - BREATH_MIN), 0);
+
+        if (animated && (ripples.length || front !== null)) {
+          for (let r = 0, i = 0; r < rows; r++) {
+            for (let c = 0; c < cols; c++, i++) {
+              const x = (c + 0.5) * cell, y = (r + 0.5) * cell;
+              let v = front === null ? 0 : band((x + y) / Math.SQRT2, front);
+              for (const p of ripples) v += ring(Math.hypot(x - p.x, y - p.y), t - p.t0);
+              const l = level(v);
+              if (l) buckets[l].push(i);
+            }
+          }
+          fillBuckets(accent, q => q * WAVE_ALPHA, 1);
+        }
+      };
+
+      let lastDraw = -Infinity;
+      let wasLive = true;
+      const tick = (t: number) => {
+        frame = requestAnimationFrame(tick);
+        if (t - lastDraw < FRAME_MS - 2) return; // small slack so 60Hz screens land on every 2nd frame
+        // Without breathing (touch), nothing moves between ripples and sweeps; skip those frames.
+        const live = !coarse.matches || ripples.length > 0 || idleFront(t - lastMove, (w + h) / Math.SQRT2) !== null;
+        if (live || wasLive) { draw(t, true); lastDraw = t; }
+        wasLive = live;
+      };
       const stop = () => { cancelAnimationFrame(frame); frame = 0; };
       const sync = () => {
         stop();
+        wasLive = true;
         if (motion.matches || document.hidden) draw(performance.now(), false);
         else frame = requestAnimationFrame(tick);
       };
@@ -149,6 +173,7 @@ export class PixelField {
       addEventListener('resize', onResize);
       document.addEventListener('visibilitychange', sync);
       motion.addEventListener('change', sync);
+      coarse.addEventListener('change', sync);
 
       destroyRef.onDestroy(() => {
         stop();
@@ -158,6 +183,7 @@ export class PixelField {
         removeEventListener('resize', onResize);
         document.removeEventListener('visibilitychange', sync);
         motion.removeEventListener('change', sync);
+        coarse.removeEventListener('change', sync);
       });
     });
   }
